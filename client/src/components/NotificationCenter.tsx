@@ -19,6 +19,7 @@ interface ExecutionNotification {
   message: string;
   timestamp: number;
   userId: number;
+  read?: boolean;
 }
 
 export function NotificationCenter() {
@@ -44,7 +45,7 @@ export function NotificationCenter() {
     });
 
     const handleNotification = (notification: ExecutionNotification) => {
-      setNotifications((prev) => [notification, ...prev].slice(0, 50)); // Keep last 50
+      setNotifications((prev) => [{ ...notification, read: false }, ...prev].slice(0, 50)); // Keep last 50
       setUnreadCount((prev) => prev + 1);
 
       // Show toast notification
@@ -74,7 +75,23 @@ export function NotificationCenter() {
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (open) {
+      // Mark all as read
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
+    }
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+    setUnreadCount(0);
+  };
+
+  const handleMarkAsRead = (index: number) => {
+    setNotifications((prev) =>
+      prev.map((n, i) => (i === index ? { ...n, read: true } : n))
+    );
+    if (!notifications[index].read) {
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     }
   };
 
@@ -129,7 +146,7 @@ export function NotificationCenter() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setNotifications([])}
+              onClick={handleClearAll}
             >
               Clear all
             </Button>
@@ -146,9 +163,15 @@ export function NotificationCenter() {
               {notifications.map((notification, index) => (
                 <div
                   key={`${notification.executionId}-${index}`}
-                  className="p-4 hover:bg-accent/50 transition-colors"
+                  className={`p-4 hover:bg-accent/50 transition-colors relative ${
+                    !notification.read ? "bg-accent/20" : ""
+                  }`}
+                  onClick={() => handleMarkAsRead(index)}
                 >
-                  <div className="flex items-start gap-3">
+                  {!notification.read && (
+                    <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full" />
+                  )}
+                  <div className="flex items-start gap-3 ml-4">
                     {getStatusIcon(notification.status)}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground">

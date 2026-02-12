@@ -39,6 +39,7 @@ import {
   Store,
   FileText,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -60,6 +61,7 @@ const menuItems = [
   { icon: UserPlus, label: "Collaboration", path: "/collaboration" },
   { icon: Store, label: "Marketplace", path: "/marketplace" },
   { icon: FileText, label: "Documentation", path: "/documentation" },
+  { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: Sparkles, label: "AI Generator", path: "/ai-generator" },
 ];
 

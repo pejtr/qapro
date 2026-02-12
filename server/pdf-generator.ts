@@ -21,6 +21,12 @@ export interface ReportData {
     failedSteps: number;
     successRate: number;
   };
+  sections?: {
+    executionDetails?: boolean;
+    logs?: boolean;
+    metrics?: boolean;
+    screenshots?: boolean;
+  };
 }
 
 export async function generatePDFReport(data: ReportData): Promise<Buffer> {
@@ -45,21 +51,23 @@ export async function generatePDFReport(data: ReportData): Promise<Buffer> {
       .text(data.title, { align: 'center' })
       .moveDown(1);
 
-    // Execution Info
-    doc.fontSize(14).fillColor('#6366f1').text('Execution Information');
-    doc.moveDown(0.5);
+    // Execution Info (always shown if executionDetails is true)
+    if (data.sections?.executionDetails !== false) {
+      doc.fontSize(14).fillColor('#6366f1').text('Execution Information');
+      doc.moveDown(0.5);
 
-    doc.fontSize(11).fillColor('#000000');
-    doc.text(`Script Name: ${data.scriptName}`);
-    doc.text(`Execution ID: #${data.executionId}`);
-    doc.text(`Status: ${data.status.toUpperCase()}`);
-    doc.text(`Start Time: ${data.startTime.toLocaleString()}`);
-    doc.text(`End Time: ${data.endTime.toLocaleString()}`);
-    doc.text(`Duration: ${(data.duration / 1000).toFixed(2)}s`);
-    doc.moveDown(1);
+      doc.fontSize(11).fillColor('#000000');
+      doc.text(`Script Name: ${data.scriptName}`);
+      doc.text(`Execution ID: #${data.executionId}`);
+      doc.text(`Status: ${data.status.toUpperCase()}`);
+      doc.text(`Start Time: ${data.startTime.toLocaleString()}`);
+      doc.text(`End Time: ${data.endTime.toLocaleString()}`);
+      doc.text(`Duration: ${(data.duration / 1000).toFixed(2)}s`);
+      doc.moveDown(1);
+    }
 
-    // Metrics
-    if (data.metrics) {
+    // Metrics (only if metrics section is enabled)
+    if (data.metrics && data.sections?.metrics !== false) {
       doc.fontSize(14).fillColor('#6366f1').text('Performance Metrics');
       doc.moveDown(0.5);
 
@@ -71,12 +79,13 @@ export async function generatePDFReport(data: ReportData): Promise<Buffer> {
       doc.moveDown(1);
     }
 
-    // Execution Logs
-    doc.fontSize(14).fillColor('#6366f1').text('Execution Logs');
-    doc.moveDown(0.5);
+    // Execution Logs (only if logs section is enabled)
+    if (data.sections?.logs !== false && data.logs.length > 0) {
+      doc.fontSize(14).fillColor('#6366f1').text('Execution Logs');
+      doc.moveDown(0.5);
 
-    doc.fontSize(9).fillColor('#000000');
-    data.logs.slice(0, 50).forEach((log) => {
+      doc.fontSize(9).fillColor('#000000');
+      data.logs.slice(0, 50).forEach((log) => {
       const timestamp = new Date(log.timestamp).toLocaleTimeString();
       const levelColor =
         log.level === 'error'
@@ -94,11 +103,12 @@ export async function generatePDFReport(data: ReportData): Promise<Buffer> {
         .text(log.message);
     });
 
-    if (data.logs.length > 50) {
-      doc.moveDown(0.5);
-      doc
-        .fillColor('#6b7280')
-        .text(`... and ${data.logs.length - 50} more log entries`);
+      if (data.logs.length > 50) {
+        doc.moveDown(0.5);
+        doc
+          .fillColor('#6b7280')
+          .text(`... and ${data.logs.length - 50} more log entries`);
+      }
     }
 
     // Footer

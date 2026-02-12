@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { broadcastExecutionNotification } from "./_core/websocket";
+import { blogRouter } from "./blogRouter";
 
 const scriptNodeSchema = z.object({
   id: z.string(),
@@ -23,6 +24,7 @@ const scriptEdgeSchema = z.object({
 
 export const appRouter = router({
   system: systemRouter,
+  blog: blogRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -191,6 +193,8 @@ export const appRouter = router({
       category: z.string().optional(),
       platform: z.string().optional(),
       limit: z.number().optional(),
+      sortBy: z.enum(["downloads", "rating", "recent", "price"]).optional(),
+      minRating: z.number().min(1).max(5).optional(),
     }).optional()).query(({ input }) => db.getMarketplaceTemplates(input)),
     get: publicProcedure.input(z.object({ id: z.number() })).query(({ input }) => db.getMarketplaceTemplateById(input.id)),
     create: protectedProcedure.input(z.object({
@@ -335,6 +339,12 @@ export const appRouter = router({
   reports: router({
     exportPDF: protectedProcedure.input(z.object({
       executionId: z.number(),
+      sections: z.object({
+        executionDetails: z.boolean().optional().default(true),
+        logs: z.boolean().optional().default(true),
+        metrics: z.boolean().optional().default(true),
+        screenshots: z.boolean().optional().default(true),
+      }).optional(),
     })).mutation(async ({ ctx, input }) => {
       const { generatePDFReport } = await import('./pdf-generator');
       
@@ -349,6 +359,13 @@ export const appRouter = router({
       const failedSteps = logs.filter((l: any) => l.level === 'error').length;
       const successfulSteps = totalSteps - failedSteps;
       
+      const sections = input.sections || {
+        executionDetails: true,
+        logs: true,
+        metrics: true,
+        screenshots: true,
+      };
+      
       const pdfBuffer = await generatePDFReport({
         title: 'Automation Execution Report',
         executionId: execution.id,
@@ -357,13 +374,14 @@ export const appRouter = router({
         startTime: new Date(execution.createdAt),
         endTime: execution.completedAt ? new Date(execution.completedAt) : new Date(),
         duration: execution.duration || 0,
-        logs,
-        metrics: {
+        logs: sections.logs ? logs : [],
+        metrics: sections.metrics ? {
           totalSteps,
           successfulSteps,
           failedSteps,
           successRate: totalSteps > 0 ? (successfulSteps / totalSteps) * 100 : 0,
-        },
+        } : undefined,
+        sections,
       });
       
       return {

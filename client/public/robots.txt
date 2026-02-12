@@ -1,0 +1,15 @@
+# robots.txt for QA Automation - AI ToolKit
+User-agent: *
+Allow: /
+Allow: /blog
+Allow: /blog/*
+
+# Sitemap
+Sitemap: https://momentum-studio.manus.space/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin
+Disallow: /api
+
+# Crawl-delay
+Crawl-delay: 1

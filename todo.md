@@ -113,3 +113,44 @@
 - [ ] Add notification preferences (email, in-app, webhook)
 - [x] Build notification history page
 - [ ] Support custom webhook URLs for CI/CD integration
+
+
+## Feature Enhancements
+
+### PDF Report Customization
+- [ ] Add section selection checkboxes (execution details, logs, metrics, screenshots)
+- [ ] Create customization UI in frontend before export
+- [x] Update backend to accept sections parameter
+- [x] Generate PDF with only selected sections
+
+### Marketplace Sorting & Filtering
+- [ ] Add sort dropdown (rating, review count, price, date)
+- [x] Implement sort by highest/lowest rating (backend)
+- [x] Implement sort by most/least reviews (backend)
+- [x] Add filter by minimum rating parameter (backend)
+- [x] Update marketplace list query to support sorting
+
+### Notification Management
+- [x] Add read/unread status to notifications
+- [x] Implement "mark as read" functionality
+- [x] Add visual indicator for unread notifications (blue dot)
+- [x] Auto-mark all as read when opening panel
+- [ ] Improve "clear all" to only clear read notifications
+- [ ] Add "mark all as read" button
+
+
+## Feature 22: Blog & Documentation System (from XML Validator integration)
+- [x] Add blog database schema (posts, categories, tags, comments)
+- [x] Run database migration for blog tables
+- [x] Create blog tRPC router with CRUD operations
+- [x] Build blog listing page with filtering
+- [x] Build article detail page with SEO optimization
+- [x] Add blog link to navigation menu
+- [x] Add comment system for articles
+- [ ] Create admin interface for content management
+- [x] Implement dynamic sitemap.xml generation
+- [x] Create robots.txt for proper crawling
+- [x] Write 3 SEO articles about QA automation (browser automation, testing mistakes, Playwright vs Puppeteer)
+- [x] Add meta tags and structured data
+- [ ] Write 5-7 more SEO articles
+- [ ] Implement internal linking strategy

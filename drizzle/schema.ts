@@ -223,3 +223,69 @@ export const documentations = mysqlTable("documentations", {
 
 export type Documentation = typeof documentations.$inferSelect;
 export type InsertDocumentation = typeof documentations.$inferInsert;
+
+
+// ========== Blog System ==========
+export const blogPosts = mysqlTable("blog_posts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  authorId: int("authorId").notNull(),
+  status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  featuredImage: varchar("featuredImage", { length: 512 }),
+  metaDescription: varchar("metaDescription", { length: 320 }),
+  keywords: text("keywords"),
+  viewCount: int("viewCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+export const blogCategories = mysqlTable("blog_categories", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type BlogCategory = typeof blogCategories.$inferSelect;
+export type InsertBlogCategory = typeof blogCategories.$inferInsert;
+
+export const blogTags = mysqlTable("blog_tags", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 50 }).notNull(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type BlogTag = typeof blogTags.$inferSelect;
+export type InsertBlogTag = typeof blogTags.$inferInsert;
+
+export const blogPostCategories = mysqlTable("blog_post_categories", {
+  postId: int("postId").notNull(),
+  categoryId: int("categoryId").notNull(),
+});
+
+export const blogPostTags = mysqlTable("blog_post_tags", {
+  postId: int("postId").notNull(),
+  tagId: int("tagId").notNull(),
+});
+
+export const blogComments = mysqlTable("blog_comments", {
+  id: int("id").autoincrement().primaryKey(),
+  postId: int("postId").notNull(),
+  userId: int("userId").notNull(),
+  content: text("content").notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogComment = typeof blogComments.$inferSelect;
+export type InsertBlogComment = typeof blogComments.$inferInsert;

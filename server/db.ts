@@ -8,7 +8,11 @@ import {
   marketplaceTemplates, InsertMarketplaceTemplate,
   templateReviews, InsertTemplateReview,
   templatePurchases, InsertTemplatePurchase,
-  documentations, InsertDocumentation
+  documentations, InsertDocumentation,
+  blogPosts, InsertBlogPost,
+  blogCategories, InsertBlogCategory,
+  blogTags, InsertBlogTag,
+  blogComments, InsertBlogComment
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -262,15 +266,41 @@ export async function upsertCollaborationSession(data: InsertCollaborationSessio
 }
 
 // ========== Marketplace ==========
-export async function getMarketplaceTemplates(filters?: { category?: string; platform?: string; limit?: number }) {
+export async function getMarketplaceTemplates(filters?: { 
+  category?: string; 
+  platform?: string; 
+  limit?: number;
+  sortBy?: string;
+  minRating?: number;
+}) {
   const db = await getDb();
   if (!db) return [];
   const conditions = [eq(marketplaceTemplates.status, 'published')];
   if (filters?.category) conditions.push(eq(marketplaceTemplates.category, filters.category));
   if (filters?.platform) conditions.push(eq(marketplaceTemplates.platform, filters.platform as any));
+  // Note: Rating filtering would require JOIN with reviews table
+  // For now, we'll sort by review count as a proxy
+  
+  let orderByClause;
+  switch (filters?.sortBy) {
+    case 'rating':
+      orderByClause = desc(marketplaceTemplates.reviewCount);
+      break;
+    case 'recent':
+      orderByClause = desc(marketplaceTemplates.createdAt);
+      break;
+    case 'price':
+      orderByClause = marketplaceTemplates.price;
+      break;
+    case 'downloads':
+    default:
+      orderByClause = desc(marketplaceTemplates.downloads);
+      break;
+  }
+  
   return db.select().from(marketplaceTemplates)
     .where(and(...conditions))
-    .orderBy(desc(marketplaceTemplates.downloads))
+    .orderBy(orderByClause)
     .limit(filters?.limit || 50);
 }
 
@@ -346,4 +376,109 @@ export async function updateDocumentation(id: number, userId: number, data: Part
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(documentations).set(data).where(and(eq(documentations.id, id), eq(documentations.userId, userId)));
+}
+
+
+// ========== Blog Posts ==========
+export async function getBlogPosts(status?: string) {
+  const db = await getDb();
+  if (!db) return [];
+  if (status) {
+    return db.select().from(blogPosts).where(eq(blogPosts.status, status as any)).orderBy(desc(blogPosts.publishedAt));
+  }
+  return db.select().from(blogPosts).orderBy(desc(blogPosts.createdAt));
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getBlogPostById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createBlogPost(data: InsertBlogPost) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(blogPosts).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateBlogPost(id: number, data: Partial<InsertBlogPost>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(blogPosts).set(data).where(eq(blogPosts.id, id));
+  return getBlogPostById(id);
+}
+
+export async function deleteBlogPost(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(blogPosts).where(eq(blogPosts.id, id));
+}
+
+export async function incrementBlogPostViews(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(blogPosts).set({ viewCount: sql`${blogPosts.viewCount} + 1` }).where(eq(blogPosts.id, id));
+}
+
+// ========== Blog Categories ==========
+export async function getBlogCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogCategories).orderBy(blogCategories.name);
+}
+
+export async function createBlogCategory(data: InsertBlogCategory) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(blogCategories).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+// ========== Blog Tags ==========
+export async function getBlogTags() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogTags).orderBy(blogTags.name);
+}
+
+export async function createBlogTag(data: InsertBlogTag) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(blogTags).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+// ========== Blog Comments ==========
+export async function getBlogComments(postId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogComments).where(eq(blogComments.postId, postId)).orderBy(desc(blogComments.createdAt));
+}
+
+export async function createBlogComment(data: InsertBlogComment) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(blogComments).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateBlogCommentStatus(id: number, status: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(blogComments).set({ status: status as any }).where(eq(blogComments.id, id));
+}
+
+export async function deleteBlogComment(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(blogComments).where(eq(blogComments.id, id));
 }

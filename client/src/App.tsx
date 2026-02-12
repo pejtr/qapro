@@ -19,6 +19,8 @@ import Collaboration from "./pages/Collaboration";
 import Marketplace from "./pages/Marketplace";
 import Documentation from "./pages/Documentation";
 import AIGenerator from "./pages/AIGenerator";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import { Onboarding } from "./components/Onboarding";
 
 function Router() {
@@ -38,6 +40,8 @@ function Router() {
         <Route path="/documentation" component={Documentation} />
         <Route path="/ai-generator" component={AIGenerator} />
         <Route path="/monitor" component={LiveMonitor} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/macos" component={MacOSIntegration} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
