@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,6 +14,7 @@ import {
   Activity,
   TrendingUp,
   Clock,
+  FileDown,
 } from "lucide-react";
 import {
   AreaChart,
@@ -138,6 +140,38 @@ export default function Home() {
     () => performanceData[performanceData.length - 1],
     []
   );
+
+  const exportPDF = trpc.reports.exportPDF.useMutation();
+
+  const handleExportPDF = async (executionId: number) => {
+    try {
+      toast.info('Generating PDF report...');
+      const result = await exportPDF.mutateAsync({ executionId });
+      
+      // Convert base64 to blob and download
+      const byteCharacters = atob(result.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success('PDF report downloaded successfully!');
+    } catch (error) {
+      toast.error('Failed to generate PDF report');
+      console.error(error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -428,9 +462,20 @@ export default function Home() {
                         Script #{exec.scriptId}
                       </span>
                     </div>
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {exec.status}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs capitalize">
+                        {exec.status}
+                      </Badge>
+                      {(exec.status === 'completed' || exec.status === 'failed') && (
+                        <button
+                          onClick={() => handleExportPDF(exec.id)}
+                          className="text-primary hover:text-primary/80 transition-colors"
+                          title="Export PDF Report"
+                        >
+                          <FileDown className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))
               ) : (

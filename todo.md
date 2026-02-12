@@ -88,3 +88,28 @@
 
 ## Presentation
 - [ ] Create professional presentation for colleagues showcasing the platform
+
+
+## Feature 19: PDF Report Export
+- [x] Install PDF generation library (puppeteer-pdf or pdfkit)
+- [x] Create report template with test results, screenshots, and metrics
+- [x] Build PDF generation endpoint in backend
+- [x] Add export button to execution history page
+- [x] Include performance charts and graphs in PDF
+- [x] Support custom branding and logo in reports
+
+## Feature 20: Marketplace Rating & Feedback
+- [x] Add star rating system (1-5 stars) to templates
+- [x] Create review submission form with text feedback
+- [x] Display average rating and review count on template cards
+- [x] Build review moderation system for inappropriate content
+- [ ] Add "helpful" voting for reviews
+- [ ] Show top-rated templates in marketplace
+
+## Feature 21: Real-Time Notifications
+- [x] Extend WebSocket server to broadcast execution events
+- [x] Create notification component with toast messages
+- [x] Send notifications on automation completion/failure
+- [ ] Add notification preferences (email, in-app, webhook)
+- [x] Build notification history page
+- [ ] Support custom webhook URLs for CI/CD integration

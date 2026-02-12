@@ -26,6 +26,15 @@ interface EdgeUpdate {
   userId: number;
 }
 
+interface ExecutionNotification {
+  executionId: number;
+  scriptId: number;
+  status: 'completed' | 'failed' | 'running';
+  message: string;
+  timestamp: number;
+  userId: number;
+}
+
 let io: SocketIOServer | null = null;
 
 export function initializeWebSocket(httpServer: HTTPServer) {
@@ -123,12 +132,27 @@ export function initializeWebSocket(httpServer: HTTPServer) {
       });
     });
 
+    // Disconnect
     socket.on("disconnect", () => {
       console.log(`[WebSocket] Client disconnected: ${socket.id}`);
     });
   });
 
-  console.log("[WebSocket] Socket.io server initialized");
+  return io;
+}
+
+export function broadcastExecutionNotification(notification: ExecutionNotification) {
+  if (!io) {
+    console.warn('[WebSocket] Cannot broadcast notification: WebSocket not initialized');
+    return;
+  }
+  
+  // Broadcast to all clients of this user
+  io.emit(`execution-notification-${notification.userId}`, notification);
+  console.log(`[WebSocket] Broadcasted execution notification to user ${notification.userId}`);
+}
+
+export function getWebSocketServer() {
   return io;
 }
 

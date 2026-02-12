@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Store,
   Search,
@@ -42,6 +43,8 @@ export default function Marketplace() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+  const [newRating, setNewRating] = useState(0);
+  const [newComment, setNewComment] = useState("");
 
   const { data: templates } = trpc.marketplace.list.useQuery({
     category: selectedCategory === "all" ? undefined : selectedCategory,
@@ -59,6 +62,17 @@ export default function Marketplace() {
     { enabled: selectedTemplate !== null }
   );
 
+  const submitReview = trpc.marketplace.addReview.useMutation({
+    onSuccess: () => {
+      toast.success("Review submitted successfully!");
+      setNewRating(0);
+      setNewComment("");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to submit review");
+    },
+  });
+
   const purchase = trpc.marketplace.purchase.useMutation({
     onSuccess: () => {
       toast.success("Template purchased successfully!");
@@ -68,6 +82,15 @@ export default function Marketplace() {
       toast.error(error.message || "Failed to purchase template");
     },
   });
+
+  const handleSubmitReview = () => {
+    if (!selectedTemplate || newRating === 0) return;
+    submitReview.mutate({
+      templateId: selectedTemplate,
+      rating: newRating,
+      comment: newComment || undefined,
+    });
+  };
 
   const filteredTemplates = templates?.filter((t) =>
     t.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -291,6 +314,47 @@ export default function Marketplace() {
                 ) : (
                   <p className="text-sm text-muted-foreground">No reviews yet</p>
                 )}
+              </div>
+              {/* Review Submission Form */}
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-3">Write a Review</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-2 block">Rating</label>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewRating(star)}
+                          className="transition-colors"
+                        >
+                          <Star
+                            className={`h-6 w-6 ${star <= newRating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-2 block">Comment (optional)</label>
+                    <Textarea
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Share your experience with this template..."
+                      rows={3}
+                      className="resize-none"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSubmitReview}
+                    disabled={newRating === 0 || submitReview.isPending}
+                    size="sm"
+                    variant="outline"
+                  >
+                    {submitReview.isPending ? "Submitting..." : "Submit Review"}
+                  </Button>
+                </div>
               </div>
               <div className="flex items-center justify-between pt-4 border-t">
                 <div className="text-2xl font-bold text-foreground">

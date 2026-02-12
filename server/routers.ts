@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { broadcastExecutionNotification } from "./_core/websocket";
 
 const scriptNodeSchema = z.object({
   id: z.string(),
@@ -102,6 +103,35 @@ export const appRouter = router({
       stepsCompleted: 0,
       stepsTotal: input.stepsTotal || 0,
     })),
+    updateStatus: protectedProcedure.input(z.object({
+      id: z.number(),
+      status: z.enum(["queued", "running", "completed", "failed"]),
+      error: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const execution = await db.updateExecution(input.id, ctx.user.id, {
+        status: input.status,
+        error: input.error,
+        completedAt: input.status === "completed" || input.status === "failed" ? new Date() : undefined,
+      });
+
+      // Broadcast notification
+      if (execution && (input.status === "completed" || input.status === "failed")) {
+        const message = input.status === "completed"
+          ? `Automation completed successfully`
+          : `Automation failed: ${input.error || "Unknown error"}`;
+
+        broadcastExecutionNotification({
+          executionId: execution.id,
+          scriptId: execution.scriptId,
+          status: input.status,
+          message,
+          timestamp: Date.now(),
+          userId: ctx.user.id,
+        });
+      }
+
+      return execution;
+    }),
   }),
 
   // Containers
@@ -278,14 +308,14 @@ export const appRouter = router({
           const result = await executor.execute(steps);
           await executor.cleanup();
 
-          await db.updateExecution(executionId.id, {
+          await db.updateExecution(executionId.id, ctx.user.id, {
             status: result.success ? 'completed' : 'failed',
             logs: result.logs.map((msg, idx) => ({ timestamp: Date.now(), level: 'info' as const, message: msg })),
             error: result.error,
             duration: result.duration,
           });
         } catch (error) {
-          await db.updateExecution(executionId.id, {
+          await db.updateExecution(executionId.id, ctx.user.id, {
             status: 'failed',
             error: error instanceof Error ? error.message : String(error),
           });
@@ -296,8 +326,50 @@ export const appRouter = router({
     }),
 
     stop: protectedProcedure.input(z.object({ executionId: z.number() })).mutation(async ({ ctx, input }) => {
-      await db.updateExecution(input.executionId, { status: 'cancelled' });
+      await db.updateExecution(input.executionId, ctx.user.id, { status: 'cancelled' });
       return { success: true };
+    }),
+  }),
+
+  // PDF Report Export
+  reports: router({
+    exportPDF: protectedProcedure.input(z.object({
+      executionId: z.number(),
+    })).mutation(async ({ ctx, input }) => {
+      const { generatePDFReport } = await import('./pdf-generator');
+      
+      const execution = await db.getExecutionById(input.executionId, ctx.user.id);
+      if (!execution) throw new Error('Execution not found');
+      
+      const script = await db.getScriptById(execution.scriptId, ctx.user.id);
+      if (!script) throw new Error('Script not found');
+      
+      const logs = execution.logs || [];
+      const totalSteps = logs.length;
+      const failedSteps = logs.filter((l: any) => l.level === 'error').length;
+      const successfulSteps = totalSteps - failedSteps;
+      
+      const pdfBuffer = await generatePDFReport({
+        title: 'Automation Execution Report',
+        executionId: execution.id,
+        scriptName: script.name,
+        status: execution.status,
+        startTime: new Date(execution.createdAt),
+        endTime: execution.completedAt ? new Date(execution.completedAt) : new Date(),
+        duration: execution.duration || 0,
+        logs,
+        metrics: {
+          totalSteps,
+          successfulSteps,
+          failedSteps,
+          successRate: totalSteps > 0 ? (successfulSteps / totalSteps) * 100 : 0,
+        },
+      });
+      
+      return {
+        pdf: pdfBuffer.toString('base64'),
+        filename: `execution-${execution.id}-report.pdf`,
+      };
     }),
   }),
 

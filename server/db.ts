@@ -138,10 +138,19 @@ export async function createExecution(data: InsertExecution) {
   return { id: Number(result[0].insertId) };
 }
 
-export async function updateExecution(id: number, data: Partial<InsertExecution>) {
+export async function getExecutionById(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(executions).where(and(eq(executions.id, id), eq(executions.userId, userId))).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateExecution(id: number, userId: number, data: Partial<InsertExecution>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await db.update(executions).set(data).where(eq(executions.id, id));
+  await db.update(executions).set(data).where(and(eq(executions.id, id), eq(executions.userId, userId)));
+  const [execution] = await db.select().from(executions).where(eq(executions.id, id)).limit(1);
+  return execution;
 }
 
 // ========== Containers ==========

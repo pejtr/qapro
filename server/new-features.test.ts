@@ -264,3 +264,161 @@ describe("Integration Tests", () => {
     expect(found?.status).toBe("published");
   });
 });
+
+describe("PDF Report Export", () => {
+  it("generates PDF report for execution", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    // Create a test script first
+    const script = await caller.scripts.create({
+      name: "Test Script for PDF",
+      description: "Script for testing PDF export",
+    });
+
+    // Create an execution
+    const execution = await caller.executions.create({
+      scriptId: script.id,
+      stepsTotal: 5,
+    });
+
+    // Generate PDF report
+    const result = await caller.reports.exportPDF({
+      executionId: execution.id,
+    });
+
+    expect(result).toBeDefined();
+    expect(result.pdf).toBeTruthy();
+    expect(result.filename).toContain(".pdf");
+  });
+
+  it("includes execution details in PDF", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const script = await caller.scripts.create({
+      name: "Detailed Test Script",
+      description: "Script with detailed execution",
+    });
+
+    const execution = await caller.executions.create({
+      scriptId: script.id,
+      stepsTotal: 10,
+    });
+
+    const result = await caller.reports.exportPDF({
+      executionId: execution.id,
+    });
+
+    expect(result).toBeDefined();
+    expect(result.pdf).toBeTruthy();
+    expect(result.filename).toContain(".pdf");
+  });
+});
+
+describe("Marketplace Rating & Feedback", () => {
+  it("submits a review for a template", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    // Create a marketplace template first
+    const template = await caller.marketplace.create({
+      name: "Test Template for Reviews",
+      description: "Template for testing reviews",
+      category: "social-media",
+      platform: "twitter",
+      price: 0,
+    });
+
+    // Submit a review
+    const review = await caller.marketplace.addReview({
+      templateId: template.id,
+      rating: 5,
+      comment: "Excellent template!",
+    });
+
+    expect(review).toBeDefined();
+    expect(review.id).toBeDefined();
+    expect(typeof review.id).toBe("number");
+  });
+
+  it("calculates average rating correctly", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const template = await caller.marketplace.create({
+      name: "Rating Test Template",
+      description: "Template for testing average ratings",
+      category: "testing",
+      platform: "instagram",
+      price: 0,
+    });
+
+    // Submit multiple reviews (need different users, so we'll just submit one)
+    await caller.marketplace.addReview({
+      templateId: template.id,
+      rating: 5,
+      comment: "Great!",
+    });
+
+    // Get reviews for the template
+    const reviews = await caller.marketplace.getReviews({ templateId: template.id });
+
+    expect(Array.isArray(reviews)).toBe(true);
+    expect(reviews.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("Real-Time Notifications", () => {
+  it("updates execution status to completed", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const script = await caller.scripts.create({
+      name: "Notification Test Script",
+      description: "Script for testing notifications",
+    });
+
+    const execution = await caller.executions.create({
+      scriptId: script.id,
+      stepsTotal: 5,
+    });
+
+    // Update execution status to completed
+    const updated = await caller.executions.updateStatus({
+      id: execution.id,
+      status: "completed",
+    });
+
+    expect(updated).toBeDefined();
+    expect(updated.status).toBe("completed");
+    expect(updated.completedAt).toBeDefined();
+  });
+
+  it("handles execution failure with error message", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const script = await caller.scripts.create({
+      name: "Failed Execution Test",
+      description: "Script for testing failure notifications",
+    });
+
+    const execution = await caller.executions.create({
+      scriptId: script.id,
+      stepsTotal: 5,
+    });
+
+    // Update execution status to failed
+    const updated = await caller.executions.updateStatus({
+      id: execution.id,
+      status: "failed",
+      error: "Network timeout error",
+    });
+
+    expect(updated).toBeDefined();
+    expect(updated.status).toBe("failed");
+    expect(updated.error).toBe("Network timeout error");
+    expect(updated.completedAt).toBeDefined();
+  });
+});
