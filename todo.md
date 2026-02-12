@@ -93,3 +93,19 @@
 - [x] Export to PDF/HTML
 - [x] Custom branding and styling options
 - [x] Version history for documentation
+
+## Feature 14: WebSocket Real-Time Sync
+- [x] Socket.io server integration
+- [x] Real-time cursor position broadcasting
+- [x] Live workflow node updates
+- [x] Conflict resolution for simultaneous edits
+- [x] Connection status indicators
+- [x] Reconnection handling
+
+## Feature 15: Interactive Onboarding
+- [x] Welcome screen with platform overview
+- [x] Step 1: Create your first automation script
+- [x] Step 2: Configure a profile with proxy
+- [x] Step 3: Publish template to marketplace
+- [x] Progress tracking and skip option
+- [x] Completion celebration and next steps

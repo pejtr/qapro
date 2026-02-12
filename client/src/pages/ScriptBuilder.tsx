@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,8 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
 interface WorkflowNode {
   id: string;
@@ -343,11 +345,31 @@ function NodeProperties({
 }
 
 export default function ScriptBuilder() {
+  const { user } = useAuth();
   const [nodes, setNodes] = useState<WorkflowNode[]>([]);
   const [edges, setEdges] = useState<WorkflowEdge[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [scriptName, setScriptName] = useState("Untitled Script");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [currentScriptId, setCurrentScriptId] = useState<number | null>(null);
+
+  // WebSocket for real-time collaboration
+  const {
+    isConnected,
+    activeCursors,
+    activeUsers,
+    emitCursorMove,
+    emitNodeUpdate,
+    emitNodeAdd,
+    emitNodeDelete,
+    onNodeChanged,
+    onNodeAdded,
+    onNodeDeleted,
+  } = useWebSocket({
+    scriptId: currentScriptId || undefined,
+    userId: user?.id,
+    userName: user?.name || user?.email || "Anonymous",
+  });
 
   const { data: scriptsList } = trpc.scripts.list.useQuery();
   const createScript = trpc.scripts.create.useMutation({
@@ -381,8 +403,10 @@ export default function ScriptBuilder() {
         return updated;
       });
       setSelectedNode(id);
+      // Emit to WebSocket
+      emitNodeAdd(id, { x: 120, y: yOffset }, {});
     },
-    [nodes.length]
+    [nodes.length, emitNodeAdd]
   );
 
   const removeNode = useCallback((id: string) => {
@@ -391,15 +415,19 @@ export default function ScriptBuilder() {
       prev.filter((e) => e.source !== id && e.target !== id)
     );
     setSelectedNode(null);
-  }, []);
+    // Emit to WebSocket
+    emitNodeDelete(id);
+  }, [emitNodeDelete]);
 
   const moveNode = useCallback(
     (id: string, pos: { x: number; y: number }) => {
       setNodes((prev) =>
         prev.map((n) => (n.id === id ? { ...n, position: pos } : n))
       );
+      // Emit to WebSocket
+      emitNodeUpdate(id, pos);
     },
-    []
+    [emitNodeUpdate]
   );
 
   const updateNodeData = useCallback(
@@ -408,14 +436,57 @@ export default function ScriptBuilder() {
       setNodes((prev) =>
         prev.map((n) => (n.id === selectedNode ? { ...n, data } : n))
       );
+      // Emit to WebSocket
+      emitNodeUpdate(selectedNode, undefined, data);
     },
-    [selectedNode]
+    [selectedNode, emitNodeUpdate]
   );
 
   const selectedNodeObj = useMemo(
     () => nodes.find((n) => n.id === selectedNode),
     [nodes, selectedNode]
   );
+
+  // Listen to WebSocket events for collaborative editing
+  useEffect(() => {
+    const cleanupNodeChanged = onNodeChanged?.((data) => {
+      setNodes((prev) =>
+        prev.map((n) =>
+          n.id === data.nodeId
+            ? { ...n, position: data.position || n.position, data: data.data || n.data }
+            : n
+        )
+      );
+    });
+
+    const cleanupNodeAdded = onNodeAdded?.((data) => {
+      setNodes((prev) => {
+        if (prev.some((n) => n.id === data.nodeId)) return prev;
+        return [
+          ...prev,
+          {
+            id: data.nodeId,
+            type: (data.data?.type as string) || "click",
+            position: data.position || { x: 0, y: 0 },
+            data: data.data || {},
+          },
+        ];
+      });
+    });
+
+    const cleanupNodeDeleted = onNodeDeleted?.((data) => {
+      setNodes((prev) => prev.filter((n) => n.id !== data.nodeId));
+      setEdges((prev) =>
+        prev.filter((e) => e.source !== data.nodeId && e.target !== data.nodeId)
+      );
+    });
+
+    return () => {
+      cleanupNodeChanged?.();
+      cleanupNodeAdded?.();
+      cleanupNodeDeleted?.();
+    };
+  }, [onNodeChanged, onNodeAdded, onNodeDeleted]);
 
   const handleSave = () => {
     createScript.mutate({
@@ -439,6 +510,12 @@ export default function ScriptBuilder() {
           </Badge>
         </div>
         <div className="flex items-center gap-2">
+          {isConnected && activeUsers.length > 0 && (
+            <Badge variant="outline" className="text-xs gap-1.5">
+              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              {activeUsers.length + 1} online
+            </Badge>
+          )}
           <Input
             value={scriptName}
             onChange={(e) => setScriptName(e.target.value)}

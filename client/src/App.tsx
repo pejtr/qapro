@@ -18,6 +18,7 @@ import MacOSIntegration from "./pages/MacOSIntegration";
 import Collaboration from "./pages/Collaboration";
 import Marketplace from "./pages/Marketplace";
 import Documentation from "./pages/Documentation";
+import { Onboarding } from "./components/Onboarding";
 
 function Router() {
   return (
@@ -49,6 +50,7 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
+          <Onboarding />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
