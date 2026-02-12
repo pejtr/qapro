@@ -243,7 +243,7 @@ export default function Recorder() {
                   Smart Detection
                 </h4>
                 <p className="text-sm text-foreground">
-                  Momentum Studio uses intelligent DOM analysis to generate robust selectors
+                  QA Automation - AI ToolKit uses intelligent DOM analysis to generate robust selectors
                   that survive UI changes.
                 </p>
               </div>

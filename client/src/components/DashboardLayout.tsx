@@ -38,6 +38,7 @@ import {
   UserPlus,
   Store,
   FileText,
+  Sparkles,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -58,6 +59,7 @@ const menuItems = [
   { icon: UserPlus, label: "Collaboration", path: "/collaboration" },
   { icon: Store, label: "Marketplace", path: "/marketplace" },
   { icon: FileText, label: "Documentation", path: "/documentation" },
+  { icon: Sparkles, label: "AI Generator", path: "/ai-generator" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -92,11 +94,11 @@ export default function DashboardLayout({
             <div className="flex items-center gap-3">
               <Zap className="h-10 w-10 text-primary" />
               <h1 className="text-3xl font-bold tracking-tight gradient-text">
-                Momentum Studio
+                QA Automation - AI ToolKit
               </h1>
             </div>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              The Ultimate Automation Engine for macOS. Sign in to access your
+              The Ultimate Automation Engine cross-platform. Sign in to access your
               automation cockpit.
             </p>
           </div>
@@ -195,9 +197,10 @@ function DashboardLayoutContent({
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
                   <Zap className="h-5 w-5 text-primary shrink-0" />
-                  <span className="font-bold tracking-tight truncate text-foreground">
-                    Momentum
-                  </span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-sm tracking-tight truncate text-foreground">QA Automation</span>
+                    <span className="text-xs text-muted-foreground truncate">AI ToolKit</span>
+                  </div>
                 </div>
               ) : null}
             </div>

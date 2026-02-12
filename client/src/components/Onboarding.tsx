@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -8,7 +8,7 @@ import {
   Store,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
+  Settings,
   X,
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -25,10 +25,10 @@ interface OnboardingStep {
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "welcome",
-    title: "Welcome to Momentum Studio",
+    title: "Welcome to QA Automation - AI ToolKit",
     description:
-      "Your ultimate automation engine for macOS. Let's get you started with a quick tour of the key features.",
-    icon: Sparkles,
+      "Your ultimate automation engine cross-platform. Let's get you started with a quick tour of the key features.",
+    icon: Settings,
     action: "Get Started",
     path: "/",
   },
@@ -70,7 +70,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
 ];
 
-const ONBOARDING_KEY = "momentum_onboarding_completed";
+const ONBOARDING_KEY = "qa_automation_toolkit_onboarding_completed";
 
 export function Onboarding() {
   const [, setLocation] = useLocation();
@@ -124,6 +124,7 @@ export function Onboarding() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-2xl border-border">
+        <DialogTitle className="sr-only">{step.title}</DialogTitle>
         <button
           onClick={handleSkip}
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
@@ -147,7 +148,7 @@ export function Onboarding() {
           {/* Icon */}
           <div className="flex justify-center">
             <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <StepIcon className="h-10 w-10 text-primary" />
+              <StepIcon className={`h-10 w-10 text-primary ${step.id === 'welcome' ? 'animate-spin-slow' : ''}`} />
             </div>
           </div>
 

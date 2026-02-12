@@ -224,6 +224,168 @@ export const appRouter = router({
       return db.updateDocumentation(id, ctx.user.id, data);
     }),
   }),
+
+  // Execution Engine
+  execution: router({
+    execute: protectedProcedure.input(z.object({
+      scriptId: z.number(),
+      profileId: z.number().optional(),
+      config: z.object({
+        browser: z.enum(['chromium', 'firefox', 'webkit']).default('chromium'),
+        headless: z.boolean().default(true),
+      }).optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const script = await db.getScriptById(input.scriptId, ctx.user.id);
+      if (!script) throw new Error('Script not found');
+
+      const profile = input.profileId ? await db.getProfileById(input.profileId, ctx.user.id) : null;
+
+      // Convert workflow nodes to execution steps
+      const steps = (script.nodes as any[]).map(node => ({
+        type: node.type,
+        selector: node.data.selector,
+        value: node.data.value,
+        url: node.data.url,
+        timeout: node.data.timeout,
+      }));
+
+      // Create execution record
+      const executionId = await db.createExecution({
+        scriptId: input.scriptId,
+        profileId: input.profileId,
+        userId: ctx.user.id,
+        status: 'running',
+        logs: [],
+      });
+
+      // Execute in background (simplified for now)
+      // In production, this would use a job queue
+      setTimeout(async () => {
+        try {
+          const { PlaywrightExecutor } = await import('./playwright-executor');
+          const executor = new PlaywrightExecutor();
+
+          await executor.initialize({
+            browser: input.config?.browser || 'chromium',
+            headless: input.config?.headless ?? true,
+            proxy: profile && profile.proxyHost ? {
+              server: `${profile.proxyHost}:${profile.proxyPort}`,
+              username: profile.proxyUsername || undefined,
+              password: profile.proxyPassword || undefined,
+            } : undefined,
+          });
+
+          const result = await executor.execute(steps);
+          await executor.cleanup();
+
+          await db.updateExecution(executionId.id, {
+            status: result.success ? 'completed' : 'failed',
+            logs: result.logs.map((msg, idx) => ({ timestamp: Date.now(), level: 'info' as const, message: msg })),
+            error: result.error,
+            duration: result.duration,
+          });
+        } catch (error) {
+          await db.updateExecution(executionId.id, {
+            status: 'failed',
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }, 100);
+
+      return { executionId };
+    }),
+
+    stop: protectedProcedure.input(z.object({ executionId: z.number() })).mutation(async ({ ctx, input }) => {
+      await db.updateExecution(input.executionId, { status: 'cancelled' });
+      return { success: true };
+    }),
+  }),
+
+  // AI Workflow Generator
+  ai: router({
+    generateWorkflow: protectedProcedure.input(z.object({
+      prompt: z.string(),
+      conversationHistory: z.array(z.object({
+        role: z.string(),
+        content: z.string(),
+      })).optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const { invokeLLM } = await import('./_core/llm');
+
+      const systemPrompt = `You are an expert automation engineer. Generate a workflow based on the user's description.
+Return a JSON object with:
+- "explanation": A brief explanation of the workflow
+- "workflow": An object with "nodes" array containing steps
+
+Each node should have:
+- "id": unique string
+- "type": one of "navigate", "click", "fill", "wait", "screenshot", "assert"
+- "data": object with relevant fields (url, selector, value, timeout)
+
+Example:
+{
+  "explanation": "This workflow logs into Twitter and posts a tweet.",
+  "workflow": {
+    "nodes": [
+      { "id": "1", "type": "navigate", "data": { "url": "https://twitter.com/login" } },
+      { "id": "2", "type": "fill", "data": { "selector": "input[name='username']", "value": "user@example.com" } }
+    ]
+  }
+}`;
+
+      const messages = [
+        { role: 'system' as const, content: systemPrompt },
+        ...(input.conversationHistory || []).map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        })),
+        { role: 'user' as const, content: input.prompt },
+      ];
+
+      const response = await invokeLLM({
+        messages,
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: 'workflow_generation',
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                explanation: { type: 'string' },
+                workflow: {
+                  type: 'object',
+                  properties: {
+                    nodes: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          type: { type: 'string' },
+                          data: { type: 'object', additionalProperties: true },
+                        },
+                        required: ['id', 'type', 'data'],
+                        additionalProperties: false,
+                      },
+                    },
+                  },
+                  required: ['nodes'],
+                  additionalProperties: false,
+                },
+              },
+              required: ['explanation', 'workflow'],
+              additionalProperties: false,
+            },
+          },
+        },
+      });
+
+      const content = response.choices[0]?.message?.content;
+      const result = JSON.parse(typeof content === 'string' ? content : '{}');
+      return result;
+    }),
+  }),
 });
 
 // Helper function to generate documentation content from script

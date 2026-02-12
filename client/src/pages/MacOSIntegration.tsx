@@ -22,7 +22,7 @@ const INTEGRATION_FEATURES = [
   {
     icon: Workflow,
     title: "Automator Actions",
-    description: "Trigger Momentum Studio scripts from native macOS Automator workflows",
+    description: "Trigger QA Automation - AI ToolKit scripts from native macOS Automator workflows",
     color: "#6366f1",
   },
   {
@@ -52,7 +52,7 @@ const INTEGRATION_FEATURES = [
   {
     icon: Terminal,
     title: "CLI Integration",
-    description: "Control Momentum Studio from Terminal with command-line interface",
+    description: "Control QA Automation - AI ToolKit from Terminal with command-line interface",
     color: "#f472b6",
   },
 ];
@@ -60,7 +60,7 @@ const INTEGRATION_FEATURES = [
 export default function MacOSIntegration() {
   const [copied, setCopied] = useState(false);
 
-  const automatorScript = `-- Momentum Studio Automator Action
+  const automatorScript = `-- QA Automation - AI ToolKit Automator Action
 on run {input, parameters}
     tell application "System Events"
         do shell script "open momentum-studio://run-script?id=1"
@@ -121,7 +121,7 @@ end run`;
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-3">
-              Add this AppleScript action to your Automator workflow to trigger Momentum Studio scripts
+              Add this AppleScript action to your Automator workflow to trigger QA Automation - AI ToolKit scripts
             </p>
             <div className="relative">
               <pre className="bg-secondary/50 rounded-lg p-3 text-xs font-mono text-foreground overflow-x-auto">
@@ -188,7 +188,7 @@ end run`;
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-3">
-            Control Momentum Studio from Terminal for advanced automation and scripting
+            Control QA Automation - AI ToolKit from Terminal for advanced automation and scripting
           </p>
           <div className="space-y-3">
             <div>
