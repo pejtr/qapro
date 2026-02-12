@@ -1,6 +1,15 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, and, desc, gt, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, scripts, profiles, executions, containers, templates, InsertScript, InsertProfile, InsertExecution, InsertContainer } from "../drizzle/schema";
+import { 
+  InsertUser, users, scripts, profiles, executions, containers, templates, 
+  InsertScript, InsertProfile, InsertExecution, InsertContainer,
+  workspaces, InsertWorkspace, workspaceMembers, InsertWorkspaceMember,
+  collaborationSessions, InsertCollaborationSession,
+  marketplaceTemplates, InsertMarketplaceTemplate,
+  templateReviews, InsertTemplateReview,
+  templatePurchases, InsertTemplatePurchase,
+  documentations, InsertDocumentation
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -197,4 +206,135 @@ export async function getDashboardStats(userId: number) {
     runningInstances: Number(runningCount?.count || 0),
     successRate,
   };
+}
+
+
+// ========== Workspaces & Collaboration ==========
+export async function getWorkspacesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(workspaces).where(eq(workspaces.ownerId, userId)).orderBy(desc(workspaces.updatedAt));
+}
+
+export async function createWorkspace(data: InsertWorkspace) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(workspaces).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function getWorkspaceMembers(workspaceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(workspaceMembers).where(eq(workspaceMembers.workspaceId, workspaceId));
+}
+
+export async function addWorkspaceMember(data: InsertWorkspaceMember) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(workspaceMembers).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function getActiveSessions(scriptId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  return db.select().from(collaborationSessions)
+    .where(and(eq(collaborationSessions.scriptId, scriptId), gt(collaborationSessions.lastActiveAt, fiveMinutesAgo)));
+}
+
+export async function upsertCollaborationSession(data: InsertCollaborationSession) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(collaborationSessions).values(data).onDuplicateKeyUpdate({
+    set: { cursorPosition: data.cursorPosition, selectedNodeId: data.selectedNodeId, lastActiveAt: new Date() }
+  });
+}
+
+// ========== Marketplace ==========
+export async function getMarketplaceTemplates(filters?: { category?: string; platform?: string; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [eq(marketplaceTemplates.status, 'published')];
+  if (filters?.category) conditions.push(eq(marketplaceTemplates.category, filters.category));
+  if (filters?.platform) conditions.push(eq(marketplaceTemplates.platform, filters.platform as any));
+  return db.select().from(marketplaceTemplates)
+    .where(and(...conditions))
+    .orderBy(desc(marketplaceTemplates.downloads))
+    .limit(filters?.limit || 50);
+}
+
+export async function getMarketplaceTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(marketplaceTemplates).where(eq(marketplaceTemplates.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createMarketplaceTemplate(data: InsertMarketplaceTemplate) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(marketplaceTemplates).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateMarketplaceTemplate(id: number, creatorId: number, data: Partial<InsertMarketplaceTemplate>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(marketplaceTemplates).set(data).where(and(eq(marketplaceTemplates.id, id), eq(marketplaceTemplates.creatorId, creatorId)));
+}
+
+export async function incrementTemplateDownloads(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(marketplaceTemplates).set({ downloads: sql`downloads + 1` }).where(eq(marketplaceTemplates.id, id));
+}
+
+export async function getTemplateReviews(templateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(templateReviews).where(eq(templateReviews.templateId, templateId)).orderBy(desc(templateReviews.createdAt));
+}
+
+export async function createTemplateReview(data: InsertTemplateReview) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(templateReviews).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function createTemplatePurchase(data: InsertTemplatePurchase) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(templatePurchases).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function hasUserPurchased(templateId: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db.select().from(templatePurchases)
+    .where(and(eq(templatePurchases.templateId, templateId), eq(templatePurchases.userId, userId))).limit(1);
+  return result.length > 0;
+}
+
+// ========== Documentation ==========
+export async function getDocumentationsByScript(scriptId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(documentations).where(eq(documentations.scriptId, scriptId)).orderBy(desc(documentations.version));
+}
+
+export async function createDocumentation(data: InsertDocumentation) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(documentations).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateDocumentation(id: number, userId: number, data: Partial<InsertDocumentation>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(documentations).set(data).where(and(eq(documentations.id, id), eq(documentations.userId, userId)));
 }

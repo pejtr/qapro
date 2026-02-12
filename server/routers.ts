@@ -133,6 +133,130 @@ export const appRouter = router({
   dashboard: router({
     stats: protectedProcedure.query(({ ctx }) => db.getDashboardStats(ctx.user.id)),
   }),
+
+  // Collaboration
+  collaboration: router({
+    workspaces: protectedProcedure.query(({ ctx }) => db.getWorkspacesByUser(ctx.user.id)),
+    createWorkspace: protectedProcedure.input(z.object({
+      name: z.string().min(1).max(255),
+      description: z.string().optional(),
+    })).mutation(({ ctx, input }) => db.createWorkspace({ ...input, ownerId: ctx.user.id })),
+    getMembers: protectedProcedure.input(z.object({ workspaceId: z.number() })).query(({ input }) => db.getWorkspaceMembers(input.workspaceId)),
+    addMember: protectedProcedure.input(z.object({
+      workspaceId: z.number(),
+      userId: z.number(),
+      role: z.enum(["owner", "editor", "viewer"]),
+    })).mutation(({ input }) => db.addWorkspaceMember(input)),
+    getActiveSessions: protectedProcedure.input(z.object({ scriptId: z.number() })).query(({ input }) => db.getActiveSessions(input.scriptId)),
+    updateSession: protectedProcedure.input(z.object({
+      scriptId: z.number(),
+      cursorPosition: z.object({ x: z.number(), y: z.number() }).optional(),
+      selectedNodeId: z.string().optional(),
+    })).mutation(({ ctx, input }) => db.upsertCollaborationSession({ ...input, userId: ctx.user.id })),
+  }),
+
+  // Marketplace
+  marketplace: router({
+    list: publicProcedure.input(z.object({
+      category: z.string().optional(),
+      platform: z.string().optional(),
+      limit: z.number().optional(),
+    }).optional()).query(({ input }) => db.getMarketplaceTemplates(input)),
+    get: publicProcedure.input(z.object({ id: z.number() })).query(({ input }) => db.getMarketplaceTemplateById(input.id)),
+    create: protectedProcedure.input(z.object({
+      name: z.string().min(1).max(255),
+      description: z.string().optional(),
+      category: z.string().optional(),
+      platform: z.enum(["twitter", "instagram", "facebook", "tiktok", "youtube", "multi"]),
+      nodes: z.array(scriptNodeSchema).optional(),
+      edges: z.array(scriptEdgeSchema).optional(),
+      price: z.number().optional(),
+    })).mutation(({ ctx, input }) => db.createMarketplaceTemplate({ ...input, creatorId: ctx.user.id, nodes: input.nodes || [], edges: input.edges || [] })),
+    publish: protectedProcedure.input(z.object({ id: z.number() })).mutation(({ ctx, input }) => 
+      db.updateMarketplaceTemplate(input.id, ctx.user.id, { status: "published" })
+    ),
+    purchase: protectedProcedure.input(z.object({ templateId: z.number() })).mutation(async ({ ctx, input }) => {
+      const template = await db.getMarketplaceTemplateById(input.templateId);
+      if (!template) throw new Error("Template not found");
+      await db.createTemplatePurchase({ templateId: input.templateId, userId: ctx.user.id, price: template.price });
+      await db.incrementTemplateDownloads(input.templateId);
+      return { success: true };
+    }),
+    getReviews: publicProcedure.input(z.object({ templateId: z.number() })).query(({ input }) => db.getTemplateReviews(input.templateId)),
+    addReview: protectedProcedure.input(z.object({
+      templateId: z.number(),
+      rating: z.number().min(1).max(5),
+      comment: z.string().optional(),
+    })).mutation(({ ctx, input }) => db.createTemplateReview({ ...input, userId: ctx.user.id })),
+    hasPurchased: protectedProcedure.input(z.object({ templateId: z.number() })).query(({ ctx, input }) => 
+      db.hasUserPurchased(input.templateId, ctx.user.id)
+    ),
+  }),
+
+  // Documentation
+  documentation: router({
+    list: protectedProcedure.input(z.object({ scriptId: z.number() })).query(({ input }) => db.getDocumentationsByScript(input.scriptId)),
+    generate: protectedProcedure.input(z.object({
+      scriptId: z.number(),
+      title: z.string().min(1).max(255),
+      format: z.enum(["markdown", "html", "pdf"]).optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const script = await db.getScriptById(input.scriptId, ctx.user.id);
+      if (!script) throw new Error("Script not found");
+      
+      // Generate markdown documentation from script nodes
+      const content = generateDocumentationContent(script);
+      
+      return db.createDocumentation({
+        scriptId: input.scriptId,
+        userId: ctx.user.id,
+        title: input.title,
+        content,
+        format: input.format || "markdown",
+      });
+    }),
+    update: protectedProcedure.input(z.object({
+      id: z.number(),
+      title: z.string().optional(),
+      content: z.string().optional(),
+    })).mutation(({ ctx, input }) => {
+      const { id, ...data } = input;
+      return db.updateDocumentation(id, ctx.user.id, data);
+    }),
+  }),
 });
+
+// Helper function to generate documentation content from script
+function generateDocumentationContent(script: any): string {
+  const lines = [
+    `# ${script.name}`,
+    ``,
+    script.description ? `${script.description}` : '',
+    ``,
+    `## Workflow Steps`,
+    ``,
+  ];
+
+  const nodes = script.nodes || [];
+  nodes.forEach((node: any, index: number) => {
+    lines.push(`### Step ${index + 1}: ${node.data.label || node.type}`);
+    lines.push(``);
+    lines.push(`**Type:** ${node.type}`);
+    if (node.data.url) lines.push(`**URL:** ${node.data.url}`);
+    if (node.data.selector) lines.push(`**Selector:** \`${node.data.selector}\``);
+    if (node.data.value) lines.push(`**Value:** ${node.data.value}`);
+    if (node.data.wait) lines.push(`**Wait:** ${node.data.wait}ms`);
+    lines.push(``);
+  });
+
+  lines.push(`## Metadata`);
+  lines.push(``);
+  lines.push(`- **Created:** ${new Date(script.createdAt).toLocaleDateString()}`);
+  lines.push(`- **Last Updated:** ${new Date(script.updatedAt).toLocaleDateString()}`);
+  lines.push(`- **Total Steps:** ${nodes.length}`);
+  lines.push(`- **Status:** ${script.status}`);
+
+  return lines.filter(Boolean).join('\n');
+}
 
 export type AppRouter = typeof appRouter;

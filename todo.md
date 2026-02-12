@@ -68,3 +68,28 @@
 - [x] Shortcuts app integration guide
 - [x] System tray/menu bar status
 - [x] Native notification support
+
+
+## Feature 11: Real-Time Collaboration
+- [x] WebSocket integration for live workflow editing
+- [x] Multi-user cursor tracking and presence indicators
+- [x] Conflict resolution for simultaneous edits
+- [x] Team workspace management
+- [x] Activity feed and change history
+- [x] User permissions (owner, editor, viewer)
+
+## Feature 12: Marketplace
+- [x] Template listing page with search and filters
+- [x] Template detail page with preview and ratings
+- [x] Template publishing workflow
+- [x] Purchase/download system with analytics
+- [x] User reviews and ratings
+- [x] Creator dashboard with earnings
+
+## Feature 13: Auto-Documentation Generator
+- [x] Workflow analysis and step extraction
+- [x] Markdown documentation generation
+- [x] Screenshot annotations for each step
+- [x] Export to PDF/HTML
+- [x] Custom branding and styling options
+- [x] Version history for documentation

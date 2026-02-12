@@ -125,3 +125,101 @@ export interface ExecutionLog {
   step?: number;
   screenshot?: string;
 }
+
+// Collaboration tables
+export const workspaces = mysqlTable("workspaces", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerId: int("ownerId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Workspace = typeof workspaces.$inferSelect;
+export type InsertWorkspace = typeof workspaces.$inferInsert;
+
+export const workspaceMembers = mysqlTable("workspace_members", {
+  id: int("id").autoincrement().primaryKey(),
+  workspaceId: int("workspaceId").notNull(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["owner", "editor", "viewer"]).default("viewer").notNull(),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+});
+
+export type WorkspaceMember = typeof workspaceMembers.$inferSelect;
+export type InsertWorkspaceMember = typeof workspaceMembers.$inferInsert;
+
+export const collaborationSessions = mysqlTable("collaboration_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  scriptId: int("scriptId").notNull(),
+  userId: int("userId").notNull(),
+  cursorPosition: json("cursorPosition").$type<{ x: number; y: number }>(),
+  selectedNodeId: varchar("selectedNodeId", { length: 64 }),
+  lastActiveAt: timestamp("lastActiveAt").defaultNow().notNull(),
+});
+
+export type CollaborationSession = typeof collaborationSessions.$inferSelect;
+export type InsertCollaborationSession = typeof collaborationSessions.$inferInsert;
+
+// Marketplace tables
+export const marketplaceTemplates = mysqlTable("marketplace_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  creatorId: int("creatorId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  platform: mysqlEnum("platform", ["twitter", "instagram", "facebook", "tiktok", "youtube", "multi"]).notNull(),
+  nodes: json("nodes").$type<ScriptNode[]>(),
+  edges: json("edges").$type<ScriptEdge[]>(),
+  thumbnail: varchar("thumbnail", { length: 500 }),
+  price: int("price").default(0).notNull(),
+  downloads: int("downloads").default(0).notNull(),
+  rating: int("rating").default(0),
+  reviewCount: int("reviewCount").default(0).notNull(),
+  status: mysqlEnum("status", ["draft", "published", "rejected"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MarketplaceTemplate = typeof marketplaceTemplates.$inferSelect;
+export type InsertMarketplaceTemplate = typeof marketplaceTemplates.$inferInsert;
+
+export const templateReviews = mysqlTable("template_reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  userId: int("userId").notNull(),
+  rating: int("rating").notNull(),
+  comment: text("comment"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TemplateReview = typeof templateReviews.$inferSelect;
+export type InsertTemplateReview = typeof templateReviews.$inferInsert;
+
+export const templatePurchases = mysqlTable("template_purchases", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  userId: int("userId").notNull(),
+  price: int("price").notNull(),
+  purchasedAt: timestamp("purchasedAt").defaultNow().notNull(),
+});
+
+export type TemplatePurchase = typeof templatePurchases.$inferSelect;
+export type InsertTemplatePurchase = typeof templatePurchases.$inferInsert;
+
+// Documentation tables
+export const documentations = mysqlTable("documentations", {
+  id: int("id").autoincrement().primaryKey(),
+  scriptId: int("scriptId").notNull(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content"),
+  format: mysqlEnum("format", ["markdown", "html", "pdf"]).default("markdown").notNull(),
+  version: int("version").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Documentation = typeof documentations.$inferSelect;
+export type InsertDocumentation = typeof documentations.$inferInsert;

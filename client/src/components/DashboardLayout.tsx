@@ -35,6 +35,9 @@ import {
   Monitor,
   Apple,
   Zap,
+  UserPlus,
+  Store,
+  FileText,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -52,6 +55,9 @@ const menuItems = [
   { icon: TestTube, label: "BDD Integration", path: "/bdd" },
   { icon: Monitor, label: "Live Monitor", path: "/monitor" },
   { icon: Apple, label: "macOS Integration", path: "/macos" },
+  { icon: UserPlus, label: "Collaboration", path: "/collaboration" },
+  { icon: Store, label: "Marketplace", path: "/marketplace" },
+  { icon: FileText, label: "Documentation", path: "/documentation" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

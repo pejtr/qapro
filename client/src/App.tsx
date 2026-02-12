@@ -15,6 +15,9 @@ import SocialTemplates from "./pages/SocialTemplates";
 import BDDIntegration from "./pages/BDDIntegration";
 import LiveMonitor from "./pages/LiveMonitor";
 import MacOSIntegration from "./pages/MacOSIntegration";
+import Collaboration from "./pages/Collaboration";
+import Marketplace from "./pages/Marketplace";
+import Documentation from "./pages/Documentation";
 
 function Router() {
   return (
@@ -28,6 +31,9 @@ function Router() {
         <Route path="/docker" component={DockerManager} />
         <Route path="/templates" component={SocialTemplates} />
         <Route path="/bdd" component={BDDIntegration} />
+        <Route path="/collaboration" component={Collaboration} />
+        <Route path="/marketplace" component={Marketplace} />
+        <Route path="/documentation" component={Documentation} />
         <Route path="/monitor" component={LiveMonitor} />
         <Route path="/macos" component={MacOSIntegration} />
         <Route path="/404" component={NotFound} />
