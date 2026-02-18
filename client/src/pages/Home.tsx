@@ -464,7 +464,18 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs capitalize">
+                      <Badge 
+                        variant="outline" 
+                        className={`text-xs capitalize ${
+                          exec.status === "completed"
+                            ? "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20"
+                            : exec.status === "running"
+                              ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20"
+                              : exec.status === "failed"
+                                ? "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20"
+                                : "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20"
+                        }`}
+                      >
                         {exec.status}
                       </Badge>
                       {(exec.status === 'completed' || exec.status === 'failed') && (
