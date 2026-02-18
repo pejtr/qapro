@@ -49,6 +49,7 @@ import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
 import { AIAssistant } from "./AIAssistant";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -293,12 +294,18 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
-            <NotificationCenter />
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <NotificationCenter />
+            </div>
           </div>
         )}
         {!isMobile && (
           <div className="flex border-b h-14 items-center justify-end bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <NotificationCenter />
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <NotificationCenter />
+            </div>
           </div>
         )}
         <main className="flex-1 p-6">{children}</main>

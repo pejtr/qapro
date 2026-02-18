@@ -443,3 +443,46 @@
 - [x] Search and replace "Momentum Studio" references (1 found in test)
 - [x] Update package.json name to qa-pro
 - [ ] Test all pages for branding consistency
+
+
+## Feature 44: Professional Landing Page
+- [ ] Create Landing page component with hero section
+- [ ] Add features showcase section
+- [ ] Add testimonials/social proof section
+- [ ] Add CTA (Call-to-Action) buttons
+- [ ] Add footer with links and branding
+- [ ] Implement smooth scroll animations
+- [ ] Add responsive design for mobile
+
+## Feature 45: Pricing Tiers & Stripe Integration
+- [ ] Create Pricing page component
+- [ ] Design Free tier (basic features)
+- [ ] Design Pro tier (advanced features)
+- [ ] Design Enterprise tier (custom solutions)
+- [ ] Add feature comparison table
+- [ ] Integrate Stripe for payments
+- [ ] Add subscription management
+- [ ] Create checkout flow
+
+## Feature 46: Interactive Onboarding Flow
+- [ ] Create Onboarding component with steps
+- [ ] Add welcome screen with QA Pro intro
+- [ ] Add quick-start templates selection
+- [ ] Add guided tour of key features
+- [ ] Add progress indicator
+- [ ] Add skip/complete functionality
+- [ ] Store onboarding completion state
+- [ ] Add video tutorials (optional)
+
+
+## Feature 47: Star Trek Warp Core Theme
+- [x] Create theme switcher UI component
+- [x] Add TARDIS theme (current amber/orange)
+- [x] Add Star Trek Warp Core theme (blue/cyan)
+- [x] Create Warp Core animated background
+- [x] Add LCARS-style interface elements (cyan colors)
+- [x] Add blue plasma pulsing effects
+- [x] Update color variables for Star Trek theme
+- [x] Add theme persistence (localStorage)
+- [x] Add smooth theme transition animations
+- [ ] Test both themes across all pages
