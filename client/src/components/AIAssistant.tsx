@@ -12,7 +12,7 @@ interface Message {
 }
 
 export function AIAssistant() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",

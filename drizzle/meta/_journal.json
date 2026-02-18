@@ -15,6 +15,13 @@
       "when": 1770907162478,
       "tag": "0001_fancy_retro_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1771374959091,
+      "tag": "0002_quiet_the_professor",
+      "breakpoints": true
     }
   ]
 }

@@ -6,6 +6,8 @@ import { z } from "zod";
 import * as db from "./db";
 import { broadcastExecutionNotification } from "./_core/websocket";
 import { blogRouter } from "./blogRouter";
+import { dockerRouter } from "./dockerRouter";
+import { engagementRouter } from "./engagementRouter";
 
 const scriptNodeSchema = z.object({
   id: z.string(),
@@ -25,6 +27,8 @@ const scriptEdgeSchema = z.object({
 export const appRouter = router({
   system: systemRouter,
   blog: blogRouter,
+  docker: dockerRouter,
+  engagement: engagementRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

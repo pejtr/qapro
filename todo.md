@@ -282,3 +282,99 @@
 - [ ] Implement posting logic to target page (https://www.facebook.com/letyonline/)
 - [ ] Add scheduling and duplicate detection
 - [ ] Test template with real Facebook pages
+
+
+## Feature 33: TARDIS Global Theme
+- [ ] Apply TARDIS interior background to main content area
+- [ ] Add Gallifreyan circular patterns to background
+- [ ] Implement hexagonal grid overlay
+- [ ] Use amber/orange color palette globally
+- [ ] Add time rotor pulsing animations
+- [ ] Style cards with console aesthetic
+- [ ] Add coral/crystalline textures
+- [ ] Update all pages to use TARDIS theme
+
+
+## Bug Fixes
+- [ ] Fix sample profiles - show diverse social networks (Instagram, Facebook, TikTok, YouTube, LinkedIn, Twitter) instead of all Twitter
+- [ ] Update profile seed data to include different platforms
+- [ ] Add platform-specific icons for each profile type
+
+
+## Feature 34: CI/CD Pipeline Management (Jenkins-like)
+- [ ] Create pipeline database schema (pipelines, builds, stages, artifacts)
+- [ ] Build visual pipeline editor
+- [ ] Implement build triggers (commit, schedule, webhook, manual)
+- [ ] Add stage management (build, test, deploy)
+- [ ] Integrate with GitHub/GitLab/Bitbucket webhooks
+- [ ] Implement artifact storage and management
+- [ ] Add real-time build logs viewer
+- [ ] Create build history and status dashboard
+- [ ] Add email/Slack notifications for build status
+- [ ] Implement pipeline templates (Node.js, Python, Docker, etc.)
+- [ ] Add environment variables management
+- [ ] Support parallel stage execution
+
+
+## Dashboard Integration & Placeholders
+- [ ] Audit all sidebar menu items and verify pages exist
+- [ ] Create placeholder pages for: Code Generator, Recorder, Docker Manager, BDD Integration, Live Monitor, macOS Integration
+- [ ] Add "Coming Soon" UI for incomplete features
+- [ ] Ensure all menu items are clickable and navigate correctly
+- [ ] Add demo data/placeholders where real functionality isn't implemented yet
+- [ ] Test navigation flow from dashboard to all sections
+
+
+## Feature 35: Snippets Management System
+- [ ] Create snippets database schema (snippets, categories, tags)
+- [ ] Build snippet library UI with search and filtering
+- [ ] Add snippet editor with syntax highlighting
+- [ ] Implement categories (Selectors, Actions, Assertions, API Calls, Custom)
+- [ ] Add variable placeholders support (${variable_name})
+- [ ] Quick insert functionality into Script Builder
+- [ ] Team sharing and collaboration features
+- [ ] Import/Export snippets (JSON, VS Code format)
+- [ ] Pre-populate with common snippets library
+- [ ] Add snippet usage statistics
+
+
+## UI Improvements
+- [x] Increase sidebar width from 320px to 480px (50% wider)
+- [x] Set AI chatbot to open by default
+- [x] Adjust max sidebar width accordingly (750px)
+
+## Feature 36: Full Docker Integration
+- [ ] Install dockerode npm package for Docker API
+- [ ] Create Docker backend router with tRPC
+- [ ] Implement container management (create, start, stop, remove)
+- [ ] Add real-time container stats (CPU, memory, network)
+- [ ] Implement logs streaming with WebSocket
+- [ ] Add image management (pull, list, remove)
+- [ ] Implement volume management
+- [ ] Add network configuration
+- [ ] Support custom Dockerfiles
+- [ ] Add environment variables configuration
+- [ ] Implement health checks and auto-restart
+- [ ] Add 24/7 cloud execution support
+
+
+## Feature 37: Expand Social Templates (50+ templates)
+- [x] Add 10 Instagram templates (Auto Like, Comment, Story View, DM Responder, Hashtag Hunter, Follower Tracker, Reel Engagement, Story Reply Bot, Profile Scraper, Competitor Monitor)
+- [x] Add 10 TikTok templates (Video Liker, Comment Bot, Duet Automation, Hashtag Tracker, Trend Analyzer, Creator Outreach, Live Stream Monitor, Sound Tracker, Challenge Participant, Analytics Bot)
+- [x] Add 10 Facebook templates (Post Liker, Comment Responder, Group Manager, Page Monitor, Event Tracker, Marketplace Bot, Story Viewer, Friend Request Manager, Birthday Greeter, Ad Monitor)
+- [x] Add 10 YouTube templates (Video Liker, Comment Bot, Subscriber Tracker, Playlist Manager, Live Chat Bot, Community Post Responder, Channel Monitor, Premiere Notifier, Shorts Engager, Analytics Tracker)
+- [x] Add 10 Twitter templates (Tweet Liker, Reply Bot, Retweet Automation, DM Responder, Hashtag Monitor, Thread Reader, Space Listener, Poll Voter, Mention Tracker, Trend Analyzer)
+- [x] Update Social Templates page to show all templates by default (no filtering)
+- [x] Add template categories: Engagement, Growth, Content, Analytics, Automation
+
+## Feature 38: Intelligent Engagement Features
+- [x] Add AI-powered comment generation (contextually relevant)
+- [x] Implement hashtag monitoring and auto-engagement
+- [x] Add story viewing and reaction automation
+- [x] Implement intelligent DM automation with AI responses
+- [x] Add criteria-based liking (keywords, hashtags, accounts)
+- [x] Create engagement strategy scheduler
+- [x] Add engagement analytics and reporting
+- [x] Implement rate limiting and human-like delays
+- [x] Add multi-account management for each platform
+- [x] Create engagement command system (like posts, comment, follow, view stories, send DMs, react to hashtags)

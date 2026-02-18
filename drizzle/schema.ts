@@ -289,3 +289,109 @@ export const blogComments = mysqlTable("blog_comments", {
 
 export type BlogComment = typeof blogComments.$inferSelect;
 export type InsertBlogComment = typeof blogComments.$inferInsert;
+
+
+export const snippets = mysqlTable("snippets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["selectors", "actions", "assertions", "api_calls", "custom"]).default("custom").notNull(),
+  code: text("code").notNull(),
+  language: varchar("language", { length: 50 }).default("javascript").notNull(),
+  tags: json("tags").$type<string[]>(),
+  isPublic: int("isPublic").default(0).notNull(), // 0 = false, 1 = true
+  usageCount: int("usageCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Snippet = typeof snippets.$inferSelect;
+export type InsertSnippet = typeof snippets.$inferInsert;
+
+
+// ========== Engagement Automation ==========
+export const engagementCampaigns = mysqlTable("engagement_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  profileId: int("profileId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  platform: mysqlEnum("platform", ["instagram", "tiktok", "facebook", "youtube", "twitter"]).notNull(),
+  type: mysqlEnum("type", ["like", "comment", "follow", "view_story", "send_dm", "hashtag_monitor"]).notNull(),
+  targetCriteria: json("targetCriteria").$type<{
+    hashtags?: string[];
+    keywords?: string[];
+    accounts?: string[];
+    minLikes?: number;
+    maxLikes?: number;
+  }>(),
+  actionConfig: json("actionConfig").$type<{
+    useAI?: boolean;
+    commentTemplates?: string[];
+    dmTemplates?: string[];
+    maxActionsPerDay?: number;
+    delayBetweenActions?: number; // seconds
+  }>(),
+  status: mysqlEnum("status", ["active", "paused", "completed", "error"]).default("paused").notNull(),
+  actionsCompleted: int("actionsCompleted").default(0).notNull(),
+  actionsTarget: int("actionsTarget"),
+  lastRunAt: timestamp("lastRunAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EngagementCampaign = typeof engagementCampaigns.$inferSelect;
+export type InsertEngagementCampaign = typeof engagementCampaigns.$inferInsert;
+
+export const engagementActions = mysqlTable("engagement_actions", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  userId: int("userId").notNull(),
+  platform: mysqlEnum("platform", ["instagram", "tiktok", "facebook", "youtube", "twitter"]).notNull(),
+  actionType: mysqlEnum("actionType", ["like", "comment", "follow", "view_story", "send_dm"]).notNull(),
+  targetUrl: varchar("targetUrl", { length: 512 }),
+  targetUsername: varchar("targetUsername", { length: 255 }),
+  targetPostId: varchar("targetPostId", { length: 255 }),
+  content: text("content"), // comment or DM content
+  status: mysqlEnum("status", ["pending", "completed", "failed", "skipped"]).default("pending").notNull(),
+  error: text("error"),
+  executedAt: timestamp("executedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EngagementAction = typeof engagementActions.$inferSelect;
+export type InsertEngagementAction = typeof engagementActions.$inferInsert;
+
+export const hashtagMonitors = mysqlTable("hashtag_monitors", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  platform: mysqlEnum("platform", ["instagram", "tiktok", "facebook", "youtube", "twitter"]).notNull(),
+  hashtag: varchar("hashtag", { length: 255 }).notNull(),
+  autoEngage: int("autoEngage").default(0).notNull(), // boolean
+  engagementActions: json("engagementActions").$type<("like" | "comment" | "follow")[]>(),
+  commentTemplates: json("commentTemplates").$type<string[]>(),
+  useAI: int("useAI").default(0).notNull(), // boolean
+  maxActionsPerDay: int("maxActionsPerDay").default(50).notNull(),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  isActive: int("isActive").default(1).notNull(), // boolean
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type HashtagMonitor = typeof hashtagMonitors.$inferSelect;
+export type InsertHashtagMonitor = typeof hashtagMonitors.$inferInsert;
+
+export const aiCommentHistory = mysqlTable("ai_comment_history", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  platform: mysqlEnum("platform", ["instagram", "tiktok", "facebook", "youtube", "twitter"]).notNull(),
+  postUrl: varchar("postUrl", { length: 512 }),
+  postContent: text("postContent"),
+  generatedComment: text("generatedComment").notNull(),
+  wasUsed: int("wasUsed").default(0).notNull(), // boolean
+  feedback: mysqlEnum("feedback", ["good", "bad", "neutral"]),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AICommentHistory = typeof aiCommentHistory.$inferSelect;
+export type InsertAICommentHistory = typeof aiCommentHistory.$inferInsert;

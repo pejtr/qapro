@@ -12,7 +12,11 @@ import {
   blogPosts, InsertBlogPost,
   blogCategories, InsertBlogCategory,
   blogTags, InsertBlogTag,
-  blogComments, InsertBlogComment
+  blogComments, InsertBlogComment,
+  engagementCampaigns, InsertEngagementCampaign,
+  engagementActions, InsertEngagementAction,
+  hashtagMonitors, InsertHashtagMonitor,
+  aiCommentHistory, InsertAICommentHistory
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -481,4 +485,113 @@ export async function deleteBlogComment(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(blogComments).where(eq(blogComments.id, id));
+}
+
+
+// ========== Engagement Campaigns ==========
+export async function getEngagementCampaigns(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(engagementCampaigns).where(eq(engagementCampaigns.userId, userId)).orderBy(desc(engagementCampaigns.createdAt));
+}
+
+export async function getEngagementCampaignById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(engagementCampaigns).where(eq(engagementCampaigns.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createEngagementCampaign(data: InsertEngagementCampaign) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(engagementCampaigns).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateEngagementCampaign(id: number, data: Partial<InsertEngagementCampaign>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(engagementCampaigns).set(data).where(eq(engagementCampaigns.id, id));
+  return getEngagementCampaignById(id);
+}
+
+export async function deleteEngagementCampaign(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(engagementCampaigns).where(eq(engagementCampaigns.id, id));
+}
+
+// ========== Engagement Actions ==========
+export async function getEngagementActions(campaignId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(engagementActions).where(eq(engagementActions.campaignId, campaignId)).orderBy(desc(engagementActions.createdAt));
+}
+
+export async function createEngagementAction(data: InsertEngagementAction) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(engagementActions).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateEngagementAction(id: number, data: Partial<InsertEngagementAction>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(engagementActions).set(data).where(eq(engagementActions.id, id));
+}
+
+// ========== Hashtag Monitors ==========
+export async function getHashtagMonitors(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(hashtagMonitors).where(eq(hashtagMonitors.userId, userId)).orderBy(desc(hashtagMonitors.createdAt));
+}
+
+export async function getHashtagMonitorById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(hashtagMonitors).where(eq(hashtagMonitors.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createHashtagMonitor(data: InsertHashtagMonitor) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(hashtagMonitors).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateHashtagMonitor(id: number, data: Partial<InsertHashtagMonitor>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(hashtagMonitors).set(data).where(eq(hashtagMonitors.id, id));
+  return getHashtagMonitorById(id);
+}
+
+export async function deleteHashtagMonitor(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(hashtagMonitors).where(eq(hashtagMonitors.id, id));
+}
+
+// ========== AI Comment History ==========
+export async function getAICommentHistory(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(aiCommentHistory).where(eq(aiCommentHistory.userId, userId)).orderBy(desc(aiCommentHistory.createdAt)).limit(limit);
+}
+
+export async function createAICommentHistory(data: InsertAICommentHistory) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(aiCommentHistory).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function updateAICommentFeedback(id: number, feedback: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(aiCommentHistory).set({ feedback: feedback as any }).where(eq(aiCommentHistory.id, id));
 }
