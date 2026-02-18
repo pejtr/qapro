@@ -206,8 +206,8 @@ function DashboardLayoutContent({
                 <div className="flex items-center gap-2 min-w-0">
                   <Zap className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex flex-col min-w-0">
-                    <span className="font-bold text-sm tracking-tight truncate text-foreground">QA Automation</span>
-                    <span className="text-xs text-muted-foreground truncate">AI ToolKit</span>
+                  <span className="font-bold text-sm tracking-tight truncate text-foreground">QA Pro</span>
+                  <span className="text-xs text-muted-foreground truncate">AI Automation ToolKit</span>
                   </div>
                 </div>
               ) : null}

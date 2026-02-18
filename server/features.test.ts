@@ -31,7 +31,7 @@ function createAuthContext(): { ctx: TrpcContext } {
   return { ctx };
 }
 
-describe("Momentum Studio Core Features", () => {
+describe("QA Pro Core Features", () => {
   describe("Dashboard Stats", () => {
     it("should return dashboard statistics", async () => {
       const { ctx } = createAuthContext();
