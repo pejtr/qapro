@@ -507,3 +507,25 @@ export const jobApplications = mysqlTable("job_applications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
+
+// Job Tags Tables
+export const jobTags = mysqlTable("job_tags", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  name: varchar("name", { length: 50 }).notNull(),
+  color: varchar("color", { length: 20 }).notNull().default("blue"), // Color name or hex code
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const jobListingTags = mysqlTable("job_listing_tags", {
+  id: int("id").autoincrement().primaryKey(),
+  jobId: int("job_id").notNull(),
+  tagId: int("tag_id").notNull(),
+  userId: int("user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type InsertJobTag = typeof jobTags.$inferInsert;
+export type SelectJobTag = typeof jobTags.$inferSelect;
+export type InsertJobListingTag = typeof jobListingTags.$inferInsert;
+export type SelectJobListingTag = typeof jobListingTags.$inferSelect;

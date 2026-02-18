@@ -21,6 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+import { TagManager, JobTag, getTagColorClass } from "@/components/TagManager";
 import {
   Search,
   MapPin,
@@ -38,6 +39,7 @@ import {
   Clock,
   Filter,
   TrendingUp,
+  Tag as TagIcon,
 } from "lucide-react";
 
 
@@ -52,6 +54,20 @@ export default function RemoteJobBoard() {
   const [jobType, setJobType] = useState("all");
   const [companySize, setCompanySize] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
+  const [selectedTagFilter, setSelectedTagFilter] = useState<number | null>(null);
+
+  // Tags state
+  const [userTags, setUserTags] = useState<JobTag[]>([
+    { id: 1, name: "High Priority", color: "red", userId: 1, createdAt: new Date() },
+    { id: 2, name: "Remote Only", color: "blue", userId: 1, createdAt: new Date() },
+    { id: 3, name: "Good Benefits", color: "green", userId: 1, createdAt: new Date() },
+  ]);
+
+  // Job tags mapping (jobId -> tagIds[])
+  const [jobTagsMap, setJobTagsMap] = useState<Record<number, number[]>>({
+    1: [1, 2], // Senior QA Engineer has "High Priority" and "Remote Only"
+    2: [3], // QA Lead has "Good Benefits"
+  });
 
   // Mock job listings (in production, this would come from trpc.jobs.list.useQuery)
   const mockJobs = [
@@ -242,17 +258,54 @@ export default function RemoteJobBoard() {
       if (activeTab === "interview" && appStatus !== "interview") return false;
     }
 
+    // Tag filter
+    if (selectedTagFilter !== null) {
+      const jobTags = jobTagsMap[job.id] || [];
+      if (!jobTags.includes(selectedTagFilter)) return false;
+    }
+
     return true;
   });
 
   return (
     <div className="container mx-auto py-8 space-y-6">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Remote QA Job Board</h1>
-        <p className="text-muted-foreground">
-          Find your next remote QA automation role with advanced filters and application tracking
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Remote QA Job Board</h1>
+          <p className="text-muted-foreground">
+            Find your next remote QA automation role with advanced filters and application tracking
+          </p>
+        </div>
+        <TagManager
+          tags={userTags}
+          onCreateTag={(name, color) => {
+            const newTag: JobTag = {
+              id: Math.max(0, ...userTags.map(t => t.id)) + 1,
+              name,
+              color,
+              userId: 1,
+              createdAt: new Date(),
+            };
+            setUserTags([...userTags, newTag]);
+          }}
+          onDeleteTag={(tagId) => {
+            setUserTags(userTags.filter(t => t.id !== tagId));
+            // Remove tag from all jobs
+            const newJobTagsMap = { ...jobTagsMap };
+            Object.keys(newJobTagsMap).forEach(jobId => {
+              newJobTagsMap[parseInt(jobId)] = newJobTagsMap[parseInt(jobId)].filter(id => id !== tagId);
+            });
+            setJobTagsMap(newJobTagsMap);
+            // Clear filter if deleted tag was selected
+            if (selectedTagFilter === tagId) {
+              setSelectedTagFilter(null);
+            }
+          }}
+          onUpdateTag={(tagId, name, color) => {
+            setUserTags(userTags.map(t => t.id === tagId ? { ...t, name, color } : t));
+          }}
+        />
       </div>
 
       {/* Stats */}
@@ -344,6 +397,50 @@ export default function RemoteJobBoard() {
                 {skill}
               </Badge>
             ))}
+          </div>
+        </div>
+
+        {/* Tags Filter */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Filter by Tag</label>
+            {selectedTagFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedTagFilter(null)}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {userTags.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No tags yet. Create tags to organize your jobs.</p>
+            ) : (
+              userTags.map((tag) => {
+                // Count jobs with this tag
+                const jobCount = Object.entries(jobTagsMap).filter(([_, tagIds]) => 
+                  tagIds.includes(tag.id)
+                ).length;
+                
+                return (
+                  <Badge
+                    key={tag.id}
+                    className={`cursor-pointer hover:opacity-80 transition-opacity ${
+                      selectedTagFilter === tag.id
+                        ? getTagColorClass(tag.color)
+                        : "bg-muted text-muted-foreground border-muted"
+                    }`}
+                    onClick={() => setSelectedTagFilter(selectedTagFilter === tag.id ? null : tag.id)}
+                  >
+                    <TagIcon className="h-3 w-3 mr-1" />
+                    {tag.name}
+                    <span className="ml-1 opacity-70">({jobCount})</span>
+                  </Badge>
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -511,6 +608,21 @@ export default function RemoteJobBoard() {
                         </Badge>
                       ))}
                     </div>
+
+                    {/* Job Tags */}
+                    {jobTagsMap[job.id] && jobTagsMap[job.id].length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {jobTagsMap[job.id].map((tagId) => {
+                          const tag = userTags.find(t => t.id === tagId);
+                          return tag ? (
+                            <Badge key={tagId} className={getTagColorClass(tag.color)}>
+                              <TagIcon className="h-3 w-3 mr-1" />
+                              {tag.name}
+                            </Badge>
+                          ) : null;
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -569,6 +681,48 @@ export default function RemoteJobBoard() {
                                 <SelectItem value="rejected">Rejected</SelectItem>
                               </SelectContent>
                             </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <h4 className="font-semibold">Tags</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {userTags.length === 0 ? (
+                                <p className="text-sm text-muted-foreground">No tags available. Create tags first.</p>
+                              ) : (
+                                userTags.map((tag) => {
+                                  const isSelected = jobTagsMap[job.id]?.includes(tag.id);
+                                  return (
+                                    <Badge
+                                      key={tag.id}
+                                      className={`cursor-pointer hover:opacity-80 transition-opacity ${
+                                        isSelected
+                                          ? getTagColorClass(tag.color)
+                                          : "bg-muted text-muted-foreground border-muted"
+                                      }`}
+                                      onClick={() => {
+                                        const currentTags = jobTagsMap[job.id] || [];
+                                        if (isSelected) {
+                                          // Remove tag
+                                          setJobTagsMap({
+                                            ...jobTagsMap,
+                                            [job.id]: currentTags.filter(id => id !== tag.id),
+                                          });
+                                        } else {
+                                          // Add tag
+                                          setJobTagsMap({
+                                            ...jobTagsMap,
+                                            [job.id]: [...currentTags, tag.id],
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      <TagIcon className="h-3 w-3 mr-1" />
+                                      {tag.name}
+                                    </Badge>
+                                  );
+                                })
+                              )}
+                            </div>
                           </div>
 
                           <div className="space-y-2">

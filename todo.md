@@ -796,3 +796,17 @@
 - [ ] Create backend tRPC router for job board
 - [ ] Implement job scraping/fetching from external sources
 - [ ] Add job board analytics (views, applications, success rate)
+
+
+## Feature 71: Custom Tags for Job Organization
+- [x] Create job_tags database table (tag name, color, user ID)
+- [x] Create job_listing_tags junction table (many-to-many relationship)
+- [x] Build TagManager component for creating/editing/deleting tags
+- [x] Add tag selector to job detail dialog
+- [x] Display tags on job cards with custom colors
+- [x] Implement tag filtering in job board
+- [x] Add tag-based search functionality
+- [x] Create tag statistics (jobs per tag)
+- [x] Add tag color picker with preset colors
+- [x] Implement tag autocomplete/suggestions
+- [x] Write tests for tag functionality

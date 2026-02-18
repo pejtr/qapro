@@ -43,6 +43,13 @@
       "when": 1771382147259,
       "tag": "0005_material_bruce_banner",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1771382770861,
+      "tag": "0006_nosy_post",
+      "breakpoints": true
     }
   ]
 }
