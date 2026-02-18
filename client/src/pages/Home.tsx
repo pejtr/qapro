@@ -31,6 +31,7 @@ import {
   Cell,
 } from "recharts";
 import { useMemo } from "react";
+import { FuturisticBanner } from "@/components/FuturisticBanner";
 
 // Simulated performance data for M4 Max resource visualization
 const performanceData = [
@@ -491,6 +492,9 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Futuristic Banner */}
+      <FuturisticBanner />
     </div>
   );
 }
