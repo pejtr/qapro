@@ -40,6 +40,8 @@ import {
   FileText,
   Sparkles,
   BookOpen,
+  Shield,
+  FileJson,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -64,12 +66,14 @@ const menuItems = [
   { icon: FileText, label: "Documentation", path: "/documentation" },
   { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: Sparkles, label: "AI Generator", path: "/ai-generator" },
+  { icon: Shield, label: "Security Testing", path: "/security" },
+  { icon: FileJson, label: "Data Converter", path: "/converter" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 260;
-const MIN_WIDTH = 200;
-const MAX_WIDTH = 400;
+const DEFAULT_WIDTH = 320;
+const MIN_WIDTH = 260;
+const MAX_WIDTH = 500;
 
 export default function DashboardLayout({
   children,

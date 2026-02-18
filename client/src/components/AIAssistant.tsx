@@ -97,7 +97,7 @@ Be concise but thorough. Use markdown formatting for code and lists.`
 
       {/* Chat Panel */}
       {isExpanded && (
-        <div className="flex flex-col h-96 border-t border-slate-700/50">
+        <div className="flex flex-col border-t border-slate-700/50" style={{ height: 'calc(33vh)' }}>
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => (

@@ -21,6 +21,8 @@ import Documentation from "./pages/Documentation";
 import AIGenerator from "./pages/AIGenerator";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import SecurityTesting from "./pages/SecurityTesting";
+import DataConverter from "./pages/DataConverter";
 import { Onboarding } from "./components/Onboarding";
 
 function Router() {
@@ -42,6 +44,8 @@ function Router() {
         <Route path="/monitor" component={LiveMonitor} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/security" component={SecurityTesting} />
+        <Route path="/converter" component={DataConverter} />
         <Route path="/macos" component={MacOSIntegration} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />

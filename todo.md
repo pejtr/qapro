@@ -218,11 +218,18 @@
 
 
 ## Feature 28: Security & Performance Testing
-- [ ] Add penetration testing tools (SQL injection, XSS, CSRF detection)
-- [ ] Implement security vulnerability scanner
+- [x] Add SQL Injection testing (union-based, error-based, blind, time-based)
+- [x] Add XSS (Cross-Site Scripting) testing (reflected, stored, DOM-based)
+- [x] Add Path Traversal testing
+- [x] Add Command Injection testing
+- [x] Implement security vulnerability scanner with payload library
+- [x] Create security testing reports with vulnerability severity
+- [x] Add export functionality for security reports
+- [x] Add informational tabs for each vulnerability type
+- [ ] Add CSRF (Cross-Site Request Forgery) testing
+- [ ] Add Authentication bypass testing
 - [ ] Add performance testing suite (load testing, stress testing)
 - [ ] Add response time monitoring and metrics
-- [ ] Create security testing reports
 - [ ] Add performance benchmarking dashboard
 
 ## Feature 29: API Testing Suite
@@ -243,3 +250,23 @@
 - [ ] Support language variants (JavaScript, TypeScript, Python, Java)
 - [ ] Generate complete test project structure
 - [ ] Include setup instructions and dependencies
+
+
+## Feature 31: XML Generator & JSON Converter
+- [x] Build XML generator from JSON/objects
+- [x] Build JSON to XML converter
+- [x] Build XML to JSON converter
+- [x] Add JSON validation and formatting
+- [x] Support CSV to JSON/XML conversion
+- [x] Support JSON to CSV conversion
+- [x] Provide downloadable output files
+- [x] Add copy to clipboard functionality
+- [x] Add format XML functionality
+- [x] Add examples and documentation
+- [ ] Add YAML to JSON/XML conversion
+- [ ] Add XML validation and schema support
+
+## UI Improvements
+- [x] Increase sidebar default width from 260px to 320px
+- [x] Increase sidebar max width from 400px to 500px
+- [x] Change AI chatbot window height to 1/3 of viewport (33vh)
