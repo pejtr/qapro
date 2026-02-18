@@ -36,6 +36,13 @@
       "when": 1771375951927,
       "tag": "0004_magenta_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1771382147259,
+      "tag": "0005_material_bruce_banner",
+      "breakpoints": true
     }
   ]
 }

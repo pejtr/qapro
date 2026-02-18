@@ -24,6 +24,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SecurityTesting from "./pages/SecurityTesting";
 import DataConverter from "./pages/DataConverter";
+import RemoteJobBoard from "./pages/RemoteJobBoard";
 import { Onboarding } from "./components/Onboarding";
 import { AnimatedBackground } from "./components/AnimatedBackground";
 
@@ -49,6 +50,7 @@ function Router() {
         <Route path="/security" component={SecurityTesting} />
         <Route path="/converter" component={DataConverter} />
         <Route path="/macos" component={MacOSIntegration} />
+        <Route path="/jobs" component={RemoteJobBoard} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

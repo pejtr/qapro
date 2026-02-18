@@ -44,6 +44,7 @@ import {
   FileJson,
   Link,
   TrendingUp as TrendingUpIcon,
+  Briefcase,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -78,6 +79,7 @@ const menuItems = [
   { icon: FileJson, label: "Data Converter", path: "/converter" },
   { icon: Link, label: "Backlink Checker", path: "/backlinks" },
   { icon: TrendingUpIcon, label: "Domain Authority", path: "/domain-authority" },
+  { icon: Briefcase, label: "Remote Jobs", path: "/jobs" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

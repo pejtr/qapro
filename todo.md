@@ -756,3 +756,43 @@
 - [x] Add flag icons for each timezone
 - [x] Real-time updates every second
 - [x] Show timezone abbreviations
+
+
+## Feature 76: Remote QA Job Board (PRIORITY)
+- [ ] Create job_listings database table
+- [ ] Create job_applications database table (tracking)
+- [ ] Add job board backend router
+- [ ] Create JobBoard page component
+- [ ] Implement advanced filter UI (skills, salary, location, date, type)
+- [ ] Add job listing cards with details
+- [ ] Implement application tracking (Saved, Applied, Interview, Offer, Rejected)
+- [ ] Add job search functionality
+- [ ] Integrate job API (mock data initially)
+- [ ] Add save/bookmark job feature
+- [ ] Add apply button with status tracking
+- [ ] Add application notes field
+- [ ] Add interview date picker
+- [ ] Add follow-up reminders
+- [ ] Add job board to sidebar menu
+
+
+## Feature 70: Remote QA Job Board
+- [x] Create job_listings and job_applications database tables
+- [x] Build RemoteJobBoard component with advanced filters
+- [x] Implement skill-based filtering (Cypress, Playwright, Selenium, SOAP, REST API, etc.)
+- [x] Add salary range filter ($50k-$150k+)
+- [x] Add location filter (Worldwide/Europe/USA/Asia)
+- [x] Add posted date filter (24h/7d/30d/all)
+- [x] Add job type filter (Full-time/Contract/Part-time)
+- [x] Add company size filter (Startup/Mid-size/Enterprise)
+- [x] Implement application tracking system (Saved/Applied/Interview/Offer/Rejected)
+- [x] Add application notes and dates tracking
+- [x] Create job detail dialog with full description
+- [x] Add stats dashboard (Total Jobs, Saved, Applied, Interviews)
+- [x] Implement tabs for filtering by application status
+- [x] Add "Remote Jobs" menu item to sidebar
+- [ ] Integrate with job APIs (LinkedIn, Indeed, Remote.co, We Work Remotely)
+- [ ] Add job alerts and email notifications
+- [ ] Create backend tRPC router for job board
+- [ ] Implement job scraping/fetching from external sources
+- [ ] Add job board analytics (views, applications, success rate)
