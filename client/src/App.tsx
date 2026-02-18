@@ -24,6 +24,7 @@ import BlogPost from "./pages/BlogPost";
 import SecurityTesting from "./pages/SecurityTesting";
 import DataConverter from "./pages/DataConverter";
 import { Onboarding } from "./components/Onboarding";
+import { AnimatedBackground } from "./components/AnimatedBackground";
 
 function Router() {
   return (
@@ -59,6 +60,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
+          <AnimatedBackground />
           <Toaster />
           <Onboarding />
           <Router />

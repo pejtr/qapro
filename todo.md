@@ -420,3 +420,13 @@
 - [x] Add shimmer animation keyframes
 - [x] Update global CSS with TARDIS aurora animations
 - [ ] Test performance on different devices
+
+
+## Feature 42: Readability & TARDIS Global Design
+- [x] Update card backgrounds to light/semi-transparent white (95% lightness)
+- [x] Add AnimatedBackground to App.tsx for global coverage
+- [x] Update text colors for better contrast (dark text on light cards)
+- [x] Fix dashboard stat cards with light backgrounds
+- [x] Update glass-card, glass-card-hover, glass-glow styles
+- [x] Ensure all content areas have sufficient contrast
+- [ ] Test readability across all pages
