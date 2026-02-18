@@ -4,7 +4,15 @@ import {
   CheckSquare,
   Network,
   Sparkles,
+  Globe,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 
@@ -78,16 +86,114 @@ export function ProductivityBar({
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
       <div className="container flex h-14 items-center justify-between px-4">
-        {/* Left: Time & Date */}
+        {/* Left: Time & Date with World Clock */}
         <div className="flex items-center gap-4">
           <div className="flex flex-col">
-            <span className="text-lg font-bold tabular-nums">
-              {format(currentTime, 'HH:mm:ss')}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {format(currentTime, 'EEEE, MMMM d, yyyy')}
-            </span>
+            <div className="text-2xl font-bold tabular-nums">
+              {format(currentTime, "HH:mm:ss")}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {format(currentTime, "EEEE, MMMM d, yyyy")}
+            </div>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-accent transition-colors">
+                <Globe className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-72">
+              <DropdownMenuLabel>World Clock</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇨🇿</span>
+                    <div>
+                      <div className="text-sm font-medium">Prague</div>
+                      <div className="text-xs text-muted-foreground">CET</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-mono font-bold">
+                      {format(currentTime, "HH:mm:ss")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(currentTime, "MMM d")}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇺🇸</span>
+                    <div>
+                      <div className="text-sm font-medium">New York</div>
+                      <div className="text-xs text-muted-foreground">EST</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-mono font-bold">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'America/New_York' })), "HH:mm:ss")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'America/New_York' })), "MMM d")}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇺🇸</span>
+                    <div>
+                      <div className="text-sm font-medium">Los Angeles</div>
+                      <div className="text-xs text-muted-foreground">PST</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-mono font-bold">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })), "HH:mm:ss")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })), "MMM d")}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇮🇩</span>
+                    <div>
+                      <div className="text-sm font-medium">Bali</div>
+                      <div className="text-xs text-muted-foreground">WITA</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-mono font-bold">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Makassar' })), "HH:mm:ss")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Makassar' })), "MMM d")}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇹🇭</span>
+                    <div>
+                      <div className="text-sm font-medium">Bangkok</div>
+                      <div className="text-xs text-muted-foreground">ICT</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-mono font-bold">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })), "HH:mm:ss")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })), "MMM d")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Center: Motivational Quote */}

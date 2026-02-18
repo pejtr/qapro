@@ -731,3 +731,28 @@
 - [x] Store language preference in localStorage
 - [x] Add flag icons (🇬🇧 🇨🇿)
 - [x] Position in top-right header
+
+
+## Feature 74: Enhanced Earnings Widget (PRIORITY)
+- [x] Add dropdown with detailed earnings breakdown
+- [x] Show daily earnings (today, yesterday, average)
+- [x] Show weekly earnings (this week, last week)
+- [ ] Show monthly earnings (this month, last month)
+- [x] Add interactive line chart (daily/weekly)
+- [x] Add hover tooltips with daily details
+- [x] Show trend comparison (% change vs previous period)
+- [x] Display best earning day
+- [x] Show total hours worked
+- [x] Add period selector (daily / weekly tabs)
+
+
+## Feature 75: World Clock in ProductivityBar
+- [x] Add world clock dropdown to ProductivityBar
+- [x] Show Prague time (CET/CEST)
+- [x] Show New York time (EST/EDT)
+- [x] Show Los Angeles time (PST/PDT)
+- [x] Show Bali time (WITA)
+- [x] Show Bangkok time (ICT)
+- [x] Add flag icons for each timezone
+- [x] Real-time updates every second
+- [x] Show timezone abbreviations
