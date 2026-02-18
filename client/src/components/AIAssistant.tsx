@@ -318,7 +318,7 @@ export function AIAssistant() {
                   }
                 }}
                 placeholder="Ask me anything about automation..."
-                className="min-h-[60px] resize-none bg-slate-800 border-slate-700 text-slate-200 placeholder:text-slate-500"
+                className="min-h-[60px] resize-none bg-slate-800 border-2 border-primary/40 focus:border-primary text-slate-200 placeholder:text-slate-500 transition-colors"
                 disabled={isStreaming}
               />
               <Button

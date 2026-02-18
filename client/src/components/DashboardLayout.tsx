@@ -42,6 +42,8 @@ import {
   BookOpen,
   Shield,
   FileJson,
+  Link,
+  TrendingUp as TrendingUpIcon,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -50,6 +52,9 @@ import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
 import { AIAssistant } from "./AIAssistant";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { EarningsWidget } from "./EarningsWidget";
+import { ProductivityBar } from "./ProductivityBar";
+import { MindMapDialog } from "./MindMapDialog";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -69,6 +74,8 @@ const menuItems = [
   { icon: Sparkles, label: "AI Generator", path: "/ai-generator" },
   { icon: Shield, label: "Security Testing", path: "/security" },
   { icon: FileJson, label: "Data Converter", path: "/converter" },
+  { icon: Link, label: "Backlink Checker", path: "/backlinks" },
+  { icon: TrendingUpIcon, label: "Domain Authority", path: "/domain-authority" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -216,7 +223,7 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            <SidebarMenu className="px-2 py-1">
+            <SidebarMenu className="px-2 py-1 grid grid-cols-2 gap-1">
               {menuItems.map((item) => {
                 const isActive = location === item.path;
                 return (
@@ -295,6 +302,7 @@ function DashboardLayoutContent({
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <EarningsWidget totalEarningsCZK={12500} />
               <ThemeSwitcher />
               <NotificationCenter />
             </div>
@@ -303,6 +311,7 @@ function DashboardLayoutContent({
         {!isMobile && (
           <div className="flex border-b h-14 items-center justify-end bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
+              <EarningsWidget totalEarningsCZK={12500} />
               <ThemeSwitcher />
               <NotificationCenter />
             </div>

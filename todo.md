@@ -616,3 +616,55 @@
 - [ ] Adjust menu item spacing for compact view
 - [ ] Ensure responsive behavior on collapse
 - [ ] Test all menu items visibility
+
+
+## Feature 62: Earnings Widget
+- [x] Create Earnings widget component
+- [x] Add CZK/USD currency toggle
+- [ ] Display total earnings from time tracking
+- [ ] Add real-time earnings updates
+- [ ] Add earnings breakdown (today/week/month)
+- [x] Position widget in top-right header
+- [ ] Store earnings data in database
+
+## Feature 63: Two-Column Sidebar Menu (PRIORITY)
+- [x] Update SidebarMenu to grid layout (2 columns)
+- [ ] Adjust spacing for compact view
+- [ ] Test responsive behavior
+- [ ] Ensure all menu items visible
+
+## Feature 64: ProductivityBar Integration (PRIORITY)
+- [ ] Integrate ProductivityBar into DashboardLayout
+- [ ] Position below header (sticky)
+- [ ] Wire up Mind Map dialog
+- [ ] Wire up Calendar dialog
+- [ ] Wire up To-Do dialog
+- [ ] Test on mobile and desktop
+
+
+## Feature 65: Backlink Checker
+- [ ] Create Backlink Checker page (menu item added)
+- [ ] Add domain input field
+- [ ] Integrate backlink API (Moz/Ahrefs/SEMrush)
+- [ ] Display referring domains count
+- [ ] Show backlink quality metrics
+- [ ] Add anchor text analysis
+- [ ] Display link type breakdown (dofollow/nofollow)
+- [ ] Add export functionality
+
+## Feature 66: Domain Authority Checker
+- [ ] Create Domain Authority page (menu item added)
+- [ ] Add domain input field
+- [ ] Integrate Moz API for DA/PA
+- [ ] Display Domain Authority score
+- [ ] Display Page Authority score
+- [ ] Show Trust Flow / Citation Flow
+- [ ] Add spam score indicator
+- [ ] Add historical DA tracking chart
+- [ ] Store DA history in database
+
+
+## Feature 67: AI Chatbot Input Styling
+- [x] Make AI chatbot input border thicker (2px)
+- [x] Increase border contrast with primary color
+- [x] Add focus state with stronger border
