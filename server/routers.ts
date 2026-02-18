@@ -393,6 +393,26 @@ export const appRouter = router({
 
   // AI Workflow Generator
   ai: router({
+    chat: protectedProcedure.input(z.object({
+      messages: z.array(z.object({
+        role: z.enum(['user', 'assistant', 'system']),
+        content: z.string(),
+      })),
+      systemPrompt: z.string().optional(),
+    })).mutation(async ({ input }) => {
+      const { invokeLLM } = await import('./_core/llm');
+
+      const messages = [
+        ...(input.systemPrompt ? [{ role: 'system' as const, content: input.systemPrompt }] : []),
+        ...input.messages.map(msg => ({
+          role: msg.role as 'user' | 'assistant' | 'system',
+          content: msg.content,
+        })),
+      ];
+
+      const response = await invokeLLM({ messages });
+      return { content: response.choices[0]?.message?.content || 'Sorry, I could not generate a response.' };
+    }),
     generateWorkflow: protectedProcedure.input(z.object({
       prompt: z.string(),
       conversationHistory: z.array(z.object({

@@ -182,3 +182,64 @@
 - [x] Add hexagonal console patterns
 - [x] Add time rotor energy effects (pulsing center column)
 - [x] Add coral/crystalline visual elements (amber/orange color scheme)
+
+
+## Feature 25: AI Chatbot Assistant in Sidebar
+- [x] Create collapsible chat widget in sidebar bottom panel
+- [x] Integrate with LLM for automation assistance
+- [x] Add conversation history and context memory
+- [x] Provide workflow suggestions and troubleshooting
+- [x] Enable script generation from natural language
+- [x] Add quick action buttons (Suggest, Fix, Optimize)
+
+## Feature 26: Node-Based Visual Script Builder
+- [ ] Install React Flow library for node-based editor
+- [ ] Create ScriptBuilder page with canvas
+- [ ] Implement action node types (Click, Type Text, Wait, Loop, Screenshot, Navigate, Condition)
+- [ ] Add drag-and-drop from action palette to canvas
+- [ ] Implement node connections and edge routing
+- [ ] Add node configuration panels for each action type
+- [ ] Save/load workflow to database
+- [ ] Test workflow execution from visual editor
+
+## Feature 26: Marketplace Template Import
+- [ ] Add "Import to Script Builder" button on template cards
+- [ ] Implement template import functionality
+- [ ] Load template nodes/edges into Script Builder
+- [ ] Allow customization of imported templates
+- [ ] Execute imported and customized workflows
+
+## Feature 27: Marketplace UI Enhancements
+- [ ] Add sort dropdown (rating, downloads, recent, price)
+- [ ] Add filter dropdown (platform, minimum rating)
+- [ ] Add PDF section selection checkboxes UI
+- [ ] Implement "Customize Report" dialog
+- [ ] Connect UI to existing backend sorting/filtering
+
+
+## Feature 28: Security & Performance Testing
+- [ ] Add penetration testing tools (SQL injection, XSS, CSRF detection)
+- [ ] Implement security vulnerability scanner
+- [ ] Add performance testing suite (load testing, stress testing)
+- [ ] Add response time monitoring and metrics
+- [ ] Create security testing reports
+- [ ] Add performance benchmarking dashboard
+
+## Feature 29: API Testing Suite
+- [ ] Build Swagger/OpenAPI documentation generator
+- [ ] Implement Postman collection export
+- [ ] Add SoapUI/ReadyAPI template generator
+- [ ] Create API endpoint testing interface
+- [ ] Add REST and SOAP API support
+- [ ] Implement API authentication testing (OAuth, JWT, API keys)
+- [ ] Add API response validation and assertions
+
+## Feature 30: Multi-Framework Script Export
+- [ ] Implement Cypress code generator
+- [ ] Implement Selenium WebDriver code generator
+- [ ] Implement Puppeteer code generator
+- [ ] Implement Playwright code generator
+- [ ] Add framework selection UI
+- [ ] Support language variants (JavaScript, TypeScript, Python, Java)
+- [ ] Generate complete test project structure
+- [ ] Include setup instructions and dependencies

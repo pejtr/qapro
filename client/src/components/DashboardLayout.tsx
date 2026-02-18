@@ -46,6 +46,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
+import { AIAssistant } from "./AIAssistant";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -231,6 +232,8 @@ function DashboardLayoutContent({
               })}
             </SidebarMenu>
           </SidebarContent>
+
+          <AIAssistant />
 
           <SidebarFooter className="p-3">
             <DropdownMenu>
