@@ -270,3 +270,15 @@
 - [x] Increase sidebar default width from 260px to 320px
 - [x] Increase sidebar max width from 400px to 500px
 - [x] Change AI chatbot window height to 1/3 of viewport (33vh)
+
+
+## Feature 32: Facebook Content Cloning Template
+- [ ] Create workflow template for Facebook post monitoring
+- [ ] Add scraping logic for Pelikán Facebook page (https://www.facebook.com/letenkypelikan.cz)
+- [ ] Detect post types (single images vs. carousels)
+- [ ] Download and store images/media
+- [ ] Parse post text and extract affiliate links
+- [ ] Replace affiliate links with custom parameter (?a_aid=levne-letenky)
+- [ ] Implement posting logic to target page (https://www.facebook.com/letyonline/)
+- [ ] Add scheduling and duplicate detection
+- [ ] Test template with real Facebook pages
