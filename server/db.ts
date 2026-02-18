@@ -16,7 +16,8 @@ import {
   engagementCampaigns, InsertEngagementCampaign,
   engagementActions, InsertEngagementAction,
   hashtagMonitors, InsertHashtagMonitor,
-  aiCommentHistory, InsertAICommentHistory
+  aiCommentHistory, InsertAICommentHistory,
+  aiConversations, InsertAIConversation
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -594,4 +595,25 @@ export async function updateAICommentFeedback(id: number, feedback: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(aiCommentHistory).set({ feedback: feedback as any }).where(eq(aiCommentHistory.id, id));
+}
+
+
+// ========== AI Conversation Memory ==========
+export async function getAIConversationHistory(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(aiConversations).where(eq(aiConversations.userId, userId)).orderBy(aiConversations.createdAt).limit(limit);
+}
+
+export async function createAIConversation(data: InsertAIConversation) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(aiConversations).values(data);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function clearAIConversationHistory(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(aiConversations).where(eq(aiConversations.userId, userId));
 }

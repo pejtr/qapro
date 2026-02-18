@@ -378,3 +378,16 @@
 - [x] Implement rate limiting and human-like delays
 - [x] Add multi-account management for each platform
 - [x] Create engagement command system (like posts, comment, follow, view stories, send DMs, react to hashtags)
+
+
+## Feature 39: Enhanced AI Chatbot
+- [x] Increase chatbot window height (from 33vh to 50vh)
+- [x] Add conversation memory database schema (ai_conversations table)
+- [x] Implement conversation history loading on chatbot open)
+- [x] Add conversation persistence to backend
+- [x] Fetch personas from shared project (created custom personas)
+- [x] Implement marketing persona system prompt
+- [x] Implement technical persona system prompt
+- [x] Add persona selection UI with dropdown
+- [x] Update AI router to use conversation history
+- [x] Test conversation memory persistence

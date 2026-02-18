@@ -395,3 +395,22 @@ export const aiCommentHistory = mysqlTable("ai_comment_history", {
 
 export type AICommentHistory = typeof aiCommentHistory.$inferSelect;
 export type InsertAICommentHistory = typeof aiCommentHistory.$inferInsert;
+
+
+// ========== AI Chatbot Conversation Memory ==========
+export const aiConversations = mysqlTable("ai_conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  content: text("content").notNull(),
+  persona: mysqlEnum("persona", ["marketing", "technical", "general"]).default("general"),
+  metadata: json("metadata").$type<{
+    model?: string;
+    tokens?: number;
+    context?: string;
+  }>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AIConversation = typeof aiConversations.$inferSelect;
+export type InsertAIConversation = typeof aiConversations.$inferInsert;

@@ -403,11 +403,42 @@ export const appRouter = router({
         content: z.string(),
       })),
       systemPrompt: z.string().optional(),
-    })).mutation(async ({ input }) => {
+      persona: z.enum(['marketing', 'technical', 'general']).optional(),
+      saveToHistory: z.boolean().optional(),
+    })).mutation(async ({ ctx, input }) => {
       const { invokeLLM } = await import('./_core/llm');
 
+      // Define persona-specific system prompts
+      const personaPrompts = {
+        marketing: `You are a QA automation marketing expert focused on ROI and business outcomes. You:
+- Emphasize time savings, cost reduction, and conversion rate improvements
+- Use business language with concrete metrics (e.g., "reduce testing time by 70%")
+- Provide practical examples and case studies
+- Focus on competitive advantages and market positioning
+- Highlight engagement metrics, viral growth strategies, and social media automation ROI
+- Speak in terms of campaigns, conversions, and customer acquisition costs`,
+        
+        technical: `You are a senior QA automation engineer with deep expertise in testing frameworks. You:
+- Use precise technical terminology (Playwright, Cypress, Selenium, Puppeteer)
+- Provide code examples and best practices
+- Focus on debugging, troubleshooting, and performance optimization
+- Explain architecture patterns and testing strategies
+- Reference specific APIs, selectors, and automation techniques
+- Help with script optimization, error handling, and CI/CD integration`,
+        
+        general: `You are an expert QA automation assistant. You help users with:
+- Creating and debugging automation scripts
+- Optimizing workflows and testing strategies
+- Providing practical advice for automation challenges
+- Explaining concepts clearly and concisely
+- Offering step-by-step guidance for implementation`
+      };
+
+      const selectedPersona = input.persona || 'general';
+      const personaSystemPrompt = personaPrompts[selectedPersona];
+      
       const messages = [
-        ...(input.systemPrompt ? [{ role: 'system' as const, content: input.systemPrompt }] : []),
+        { role: 'system' as const, content: input.systemPrompt || personaSystemPrompt },
         ...input.messages.map(msg => ({
           role: msg.role as 'user' | 'assistant' | 'system',
           content: msg.content,
@@ -415,8 +446,41 @@ export const appRouter = router({
       ];
 
       const response = await invokeLLM({ messages });
-      return { content: response.choices[0]?.message?.content || 'Sorry, I could not generate a response.' };
+      const content = response.choices[0]?.message?.content;
+      const responseContent = typeof content === 'string' ? content : 'Sorry, I could not generate a response.';
+
+      // Save conversation to history if requested
+      if (input.saveToHistory) {
+        const userMessage = input.messages[input.messages.length - 1];
+        if (userMessage) {
+          await db.createAIConversation({
+            userId: ctx.user.id,
+            role: 'user',
+            content: userMessage.content,
+            persona: selectedPersona,
+          });
+        }
+        
+        await db.createAIConversation({
+          userId: ctx.user.id,
+          role: 'assistant',
+          content: responseContent,
+          persona: selectedPersona,
+        });
+      }
+
+      return { content: responseContent };
     }),
+    
+    getHistory: protectedProcedure.input(z.object({
+      limit: z.number().optional(),
+    })).query(({ ctx, input }) => 
+      db.getAIConversationHistory(ctx.user.id, input.limit)
+    ),
+    
+    clearHistory: protectedProcedure.mutation(({ ctx }) => 
+      db.clearAIConversationHistory(ctx.user.id)
+    ),
     generateWorkflow: protectedProcedure.input(z.object({
       prompt: z.string(),
       conversationHistory: z.array(z.object({

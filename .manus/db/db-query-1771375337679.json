@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `ai_conversations` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `role` enum('user','assistant','system') NOT NULL,\n  `content` text NOT NULL,\n  `persona` enum('marketing','technical','general') DEFAULT 'general',\n  `metadata` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `ai_conversations_id` PRIMARY KEY(`id`),\n  INDEX `idx_userId_createdAt` (`userId`, `createdAt`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4VFjuiBDjCy66KV.2946a6a47743 --database Zbkj9ioeiM3vm5iF33PN3u --execute CREATE TABLE IF NOT EXISTS `ai_conversations` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `role` enum('user','assistant','system') NOT NULL,\n  `content` text NOT NULL,\n  `persona` enum('marketing','technical','general') DEFAULT 'general',\n  `metadata` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `ai_conversations_id` PRIMARY KEY(`id`),\n  INDEX `idx_userId_createdAt` (`userId`, `createdAt`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 500
+}
