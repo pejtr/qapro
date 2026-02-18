@@ -414,3 +414,62 @@ export const aiConversations = mysqlTable("ai_conversations", {
 
 export type AIConversation = typeof aiConversations.$inferSelect;
 export type InsertAIConversation = typeof aiConversations.$inferInsert;
+
+
+// ========== AI Script Analysis ==========
+export const scriptAnalysisResults = mysqlTable("script_analysis_results", {
+  id: int("id").autoincrement().primaryKey(),
+  scriptId: int("scriptId").notNull(),
+  userId: int("userId").notNull(),
+  executionId: int("executionId"),
+  analysisType: mysqlEnum("analysisType", ["performance", "errors", "selectors", "best_practices", "security", "comprehensive"]).notNull(),
+  overallScore: int("overallScore"), // 0-100
+  issuesFound: int("issuesFound").notNull().default(0),
+  suggestionsCount: int("suggestionsCount").notNull().default(0),
+  analysisData: json("analysisData").$type<{
+    performanceMetrics?: {
+      avgExecutionTime?: number;
+      slowSteps?: string[];
+      memoryUsage?: number;
+    };
+    errorPatterns?: {
+      type: string;
+      frequency: number;
+      severity: string;
+    }[];
+    selectorIssues?: {
+      selector: string;
+      issue: string;
+      recommendation: string;
+    }[];
+    bestPracticeViolations?: {
+      rule: string;
+      description: string;
+      impact: string;
+    }[];
+  }>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const scriptSuggestions = mysqlTable("script_suggestions", {
+  id: int("id").autoincrement().primaryKey(),
+  analysisId: int("analysisId").notNull(),
+  scriptId: int("scriptId").notNull(),
+  userId: int("userId").notNull(),
+  category: mysqlEnum("category", ["performance", "reliability", "maintainability", "security", "best_practice"]).notNull(),
+  severity: mysqlEnum("severity", ["critical", "high", "medium", "low", "info"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  currentCode: text("currentCode"),
+  suggestedCode: text("suggestedCode"),
+  explanation: text("explanation").notNull(),
+  estimatedImpact: varchar("estimatedImpact", { length: 255 }), // e.g., "30% faster execution"
+  status: mysqlEnum("status", ["pending", "applied", "dismissed", "failed"]).notNull().default("pending"),
+  appliedAt: timestamp("appliedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ScriptAnalysisResult = typeof scriptAnalysisResults.$inferSelect;
+export type InsertScriptAnalysisResult = typeof scriptAnalysisResults.$inferInsert;
+export type ScriptSuggestion = typeof scriptSuggestions.$inferSelect;
+export type InsertScriptSuggestion = typeof scriptSuggestions.$inferInsert;

@@ -391,3 +391,32 @@
 - [x] Add persona selection UI with dropdown
 - [x] Update AI router to use conversation history
 - [x] Test conversation memory persistence
+
+
+## Feature 40: AI-Powered Script Analyzer
+- [ ] Design script analysis architecture (triggers, analysis types, suggestion storage)
+- [ ] Add script_analysis_results database table
+- [ ] Add script_suggestions database table
+- [ ] Implement AI analyzer backend endpoint (analyzeScript)
+- [ ] Create analysis types: performance, errors, selectors, best_practices, security
+- [ ] Implement LLM-based code analysis with structured output
+- [ ] Add automatic analysis trigger on script execution completion
+- [ ] Create ScriptSuggestions UI component
+- [ ] Add suggestions badge/indicator in script list
+- [ ] Implement suggestion detail view with code diff
+- [ ] Add "Apply Suggestion" one-click fix
+- [ ] Test analyzer with sample scripts
+
+
+## Feature 41: TARDIS Engine - Premium Visual Effects
+- [x] Create AnimatedBackground component with aurora borealis effect
+- [x] Implement ParticleSystem with floating particles and connections
+- [x] Add CSS animations for aurora glow and shimmer effects
+- [x] Implement glow effects with radial gradients
+- [x] Add glass morphism with backdrop blur
+- [x] Create smooth hover transitions
+- [x] Add backdrop blur effects
+- [x] Implement aurora color pulse animations
+- [x] Add shimmer animation keyframes
+- [x] Update global CSS with TARDIS aurora animations
+- [ ] Test performance on different devices

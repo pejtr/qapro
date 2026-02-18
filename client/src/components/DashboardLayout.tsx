@@ -48,6 +48,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./NotificationCenter";
+import { AnimatedBackground } from "./AnimatedBackground";
 import { AIAssistant } from "./AIAssistant";
 
 const menuItems = [
@@ -187,6 +188,7 @@ function DashboardLayoutContent({
 
   return (
     <>
+      <AnimatedBackground />
       <div className="relative" ref={sidebarRef}>
         <Sidebar
           collapsible="icon"
