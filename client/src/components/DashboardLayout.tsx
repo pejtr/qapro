@@ -55,6 +55,8 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 import { EarningsWidget } from "./EarningsWidget";
 import { ProductivityBar } from "./ProductivityBar";
 import { MindMapDialog } from "./MindMapDialog";
+import { MessagingDropdown } from "./MessagingDropdown";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -159,6 +161,9 @@ function DashboardLayoutContent({
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
+  const [mindMapOpen, setMindMapOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [todoOpen, setTodoOpen] = useState(false);
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -302,7 +307,9 @@ function DashboardLayoutContent({
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <MessagingDropdown />
               <EarningsWidget totalEarningsCZK={12500} />
+              <LanguageSwitcher />
               <ThemeSwitcher />
               <NotificationCenter />
             </div>
@@ -311,13 +318,21 @@ function DashboardLayoutContent({
         {!isMobile && (
           <div className="flex border-b h-14 items-center justify-end bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
+              <MessagingDropdown />
               <EarningsWidget totalEarningsCZK={12500} />
+              <LanguageSwitcher />
               <ThemeSwitcher />
               <NotificationCenter />
             </div>
           </div>
         )}
+        <ProductivityBar 
+          onOpenMindMap={() => setMindMapOpen(true)}
+          onOpenCalendar={() => setCalendarOpen(true)}
+          onOpenTodo={() => setTodoOpen(true)}
+        />
         <main className="flex-1 p-6">{children}</main>
+        <MindMapDialog open={mindMapOpen} onOpenChange={setMindMapOpen} />
       </SidebarInset>
     </>
   );

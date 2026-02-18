@@ -668,3 +668,66 @@
 - [x] Make AI chatbot input border thicker (2px)
 - [x] Increase border contrast with primary color
 - [x] Add focus state with stronger border
+
+
+## Feature 68: ProductivityBar Integration (PRIORITY)
+- [x] Add ProductivityBar to DashboardLayout below header
+- [x] Wire up Mind Map dialog open handler
+- [x] Wire up Calendar dialog open handler  
+- [x] Wire up To-Do dialog open handler
+- [ ] Test live clock updates
+- [ ] Test quote rotation
+- [ ] Test responsive behavior
+
+## Feature 69: Windows-Specific Optimizations
+- [ ] Add Windows Docker Desktop path handling
+- [ ] Add Edge browser detection and support
+- [ ] Add NTFS file system compatibility
+- [ ] Add Windows path separator handling (\ vs /)
+- [ ] Test on Windows 10 environment
+- [ ] Add Windows-specific documentation
+
+## Feature 70: Time Tracking Backend
+- [ ] Create time_entries table in database
+- [ ] Add time tracking router
+- [ ] Implement auto-start on Online/Busy status
+- [ ] Implement auto-pause on Away/BRB/Lunch status
+- [ ] Implement auto-stop on Offline status
+- [ ] Add manual time entry endpoints
+- [ ] Calculate billable hours
+- [ ] Link to Earnings widget
+- [ ] Add time reports (daily/weekly/monthly)
+- [ ] Store hourly rate per user
+
+
+## Feature 71: Fiverr-Style Messaging System (PRIORITY)
+- [ ] Create MessagingDropdown component for top bar
+- [ ] Add message icon with unread badge
+- [ ] Display recent conversations (last 5)
+- [ ] Show message preview (first line)
+- [ ] Add timestamp formatting (5m ago, 2h ago)
+- [ ] Show sender avatar and name
+- [ ] Add online/offline status indicator
+- [ ] Add "See all messages" link
+- [ ] Create full Inbox page
+- [ ] Add quick reply functionality
+- [ ] Integrate with team collaboration backend
+- [ ] Add real-time message updates
+- [ ] Add notification sound on new message
+
+
+## Feature 72: Fix ProductivityBar Quote Display
+- [x] Increase quote container width (max-w-4xl)
+- [x] Fix text truncation issue (removed line-clamp)
+- [ ] Test with longest quotes
+
+## Feature 73: Language Switcher (EN/CZ)
+- [x] Create LanguageSwitcher component
+- [x] Add language context provider
+- [x] Create translation files (embedded in context)
+- [x] Translate menu items and common strings
+- [x] Translate menu items
+- [ ] Translate dashboard content
+- [x] Store language preference in localStorage
+- [x] Add flag icons (🇬🇧 🇨🇿)
+- [x] Position in top-right header

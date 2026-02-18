@@ -92,10 +92,10 @@ export function ProductivityBar({
 
         {/* Center: Motivational Quote */}
         <div className="hidden md:flex flex-1 items-center justify-center px-8">
-          <div className="flex items-center gap-2 max-w-2xl">
+          <div className="flex items-center gap-2 max-w-4xl">
             <Sparkles className="h-4 w-4 text-primary shrink-0" />
             <div className="flex flex-col">
-              <p className="text-sm italic text-foreground line-clamp-1">
+              <p className="text-sm italic text-foreground">
                 "{quote.text}"
               </p>
               <p className="text-xs text-muted-foreground">
