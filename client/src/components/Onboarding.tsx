@@ -63,7 +63,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     id: "complete",
     title: "You're All Set!",
     description:
-      "You've completed the onboarding tour. Start building amazing automations and unlock the full power of your M4 Max.",
+      "You've completed the onboarding tour. Start building amazing automations and unlock the full power of your system.",
     icon: CheckCircle2,
     action: "Start Building",
     path: "/",

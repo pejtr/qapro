@@ -30,10 +30,10 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FuturisticBanner } from "@/components/FuturisticBanner";
 
-// Simulated performance data for M4 Max resource visualization
+// Simulated performance data for resource visualization
 const performanceData = [
   { time: "00:00", cpu: 12, gpu: 8, neural: 5, memory: 34 },
   { time: "04:00", cpu: 18, gpu: 15, neural: 22, memory: 38 },
@@ -127,8 +127,46 @@ function ResourceGauge({
   );
 }
 
+function detectCpuLabel(): string {
+  const ua = navigator.userAgent;
+  // Detect Apple Silicon
+  if (/Mac/.test(ua) && /AppleWebKit/.test(ua)) {
+    // Try to detect M-series via platform hints
+    const platform = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform ?? "";
+    if (/macOS/.test(platform) || /Mac/.test(ua)) {
+      // Check for Apple Silicon via hardwareConcurrency heuristic
+      const cores = navigator.hardwareConcurrency || 0;
+      if (cores >= 10) return `Apple Silicon (${cores}-core)`;
+      return `Apple Mac (${cores}-core)`;
+    }
+  }
+  // Detect Windows
+  if (/Win/.test(ua)) {
+    const cores = navigator.hardwareConcurrency || 0;
+    // Try to extract CPU from user agent on Windows
+    const intelMatch = ua.match(/Intel[^;)]+/i);
+    if (intelMatch) return intelMatch[0].trim();
+    const amdMatch = ua.match(/AMD[^;)]+/i);
+    if (amdMatch) return amdMatch[0].trim();
+    return `Windows CPU (${cores}-core)`;
+  }
+  // Detect Linux
+  if (/Linux/.test(ua)) {
+    const cores = navigator.hardwareConcurrency || 0;
+    return `Linux CPU (${cores}-core)`;
+  }
+  // Fallback
+  const cores = navigator.hardwareConcurrency || 0;
+  return cores > 0 ? `CPU (${cores}-core)` : "System CPU";
+}
+
 export default function Home() {
   const { user } = useAuth();
+  const [cpuLabel, setCpuLabel] = useState("System CPU");
+
+  useEffect(() => {
+    setCpuLabel(detectCpuLabel());
+  }, []);
   const { data: stats } = trpc.dashboard.stats.useQuery(undefined, {
     enabled: !!user,
   });
@@ -234,12 +272,12 @@ export default function Home() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* M4 Max Resource Monitor */}
+        {/* Dynamic Resource Monitor */}
         <Card className="lg:col-span-2 bg-card border-border">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <Cpu className="h-4 w-4 text-primary" />
-              M4 Max Resource Monitor
+              {cpuLabel} Resource Monitor
             </CardTitle>
           </CardHeader>
           <CardContent>

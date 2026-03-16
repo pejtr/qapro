@@ -817,3 +817,8 @@
 - [x] Fix button text color contrast (Completed, Failed, Queued buttons)
 - [x] Ensure text is readable against background
 - [x] Test color contrast ratios
+
+## Bug Fix: Resource Monitor CPU Detection
+- [x] Find Resource Monitor component with hardcoded "M4 Max" label
+- [x] Replace hardcoded CPU name with dynamic detection or user-configurable setting
+- [x] Correctly detect Intel Core i9 hardware
