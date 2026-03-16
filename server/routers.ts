@@ -4,7 +4,9 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { getHardwareSettings, saveHardwareSettings } from "./db";
 import { broadcastExecutionNotification } from "./_core/websocket";
+import * as os from "os";
 import { blogRouter } from "./blogRouter";
 import { dockerRouter } from "./dockerRouter";
 import { engagementRouter } from "./engagementRouter";
@@ -564,6 +566,62 @@ Example:
       return result;
     }),
   }),
+
+  // System Metrics (real data via Node.js os module)
+  metrics: router({
+    system: publicProcedure.query(() => {
+      const cpus = os.cpus();
+      const totalMem = os.totalmem();
+      const freeMem = os.freemem();
+      const usedMem = totalMem - freeMem;
+      const memPercent = Math.round((usedMem / totalMem) * 100);
+
+      // CPU load: average across all cores from os.loadavg (1-min)
+      const loadAvg1 = os.loadavg()[0];
+      const cpuCount = cpus.length || 1;
+      const cpuPercent = Math.min(100, Math.round((loadAvg1 / cpuCount) * 100));
+
+      // CPU model from os.cpus()
+      const cpuModel = cpus[0]?.model?.trim() || "Unknown CPU";
+
+      return {
+        cpu: {
+          model: cpuModel,
+          cores: cpuCount,
+          loadPercent: cpuPercent,
+          loadAvg: { m1: loadAvg1, m5: os.loadavg()[1], m15: os.loadavg()[2] },
+        },
+        memory: {
+          totalMB: Math.round(totalMem / 1024 / 1024),
+          usedMB: Math.round(usedMem / 1024 / 1024),
+          freeMB: Math.round(freeMem / 1024 / 1024),
+          usedPercent: memPercent,
+        },
+        uptime: {
+          seconds: os.uptime(),
+          formatted: formatUptime(os.uptime()),
+        },
+        platform: os.platform(),
+        arch: os.arch(),
+        hostname: os.hostname(),
+        timestamp: Date.now(),
+      };
+    }),
+
+    // Hardware settings: save/load custom CPU/GPU labels per user
+    getHardwareSettings: protectedProcedure.query(({ ctx }) =>
+      getHardwareSettings(ctx.user.id)
+    ),
+    saveHardwareSettings: protectedProcedure
+      .input(z.object({
+        cpuLabel: z.string().max(100).optional(),
+        gpuLabel: z.string().max(100).optional(),
+        gpuVramGB: z.number().min(0).max(256).optional(),
+      }))
+      .mutation(({ ctx, input }) =>
+        saveHardwareSettings(ctx.user.id, input)
+      ),
+  }),
 });
 
 // Helper function to generate documentation content from script
@@ -600,3 +658,12 @@ function generateDocumentationContent(script: any): string {
 }
 
 export type AppRouter = typeof appRouter;
+
+function formatUptime(seconds: number): string {
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h ${m}m`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}

@@ -822,3 +822,43 @@
 - [x] Find Resource Monitor component with hardcoded "M4 Max" label
 - [x] Replace hardcoded CPU name with dynamic detection or user-configurable setting
 - [x] Correctly detect Intel Core i9 hardware
+
+## Feature 72: Real System Metrics via Node.js os module
+- [ ] Add tRPC endpoint reading CPU, memory, uptime from Node.js os module
+- [ ] Return CPU model name, core count, load averages, free/total memory
+- [ ] Expose endpoint as publicProcedure (no auth required for metrics)
+
+## Feature 73: Hardware Settings Page
+- [ ] Create /settings/hardware page
+- [ ] Allow user to manually set CPU name, GPU name
+- [ ] Persist settings in database per user
+- [ ] Add "Hardware" section in DashboardLayout sidebar
+
+## Feature 74: WebSocket Live Metrics Stream
+- [ ] Set up WebSocket endpoint on server for metrics streaming
+- [ ] Broadcast system metrics every 5 seconds
+- [ ] Update Home dashboard to subscribe and display live data
+- [ ] Show live indicator (pulsing dot) when connected
+
+## Security Hardening
+- [ ] Add HTTP security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+- [ ] Implement rate limiting on all API endpoints
+- [ ] Add input sanitization and validation on all tRPC inputs
+- [ ] Fix authorization: verify resource ownership before every DB operation
+- [ ] Prevent information leakage in error messages
+- [ ] Add CORS hardening (restrict origins)
+- [ ] Sanitize HTML output to prevent XSS
+- [ ] Add request size limits
+- [ ] Secure WebSocket connections (origin check)
+- [ ] Add SQL injection protection (parameterized queries audit)
+- [ ] Prevent path traversal attacks
+- [ ] Add security audit tests
+
+## Security: Admin Role System Revision
+- [ ] Audit schema for role field definition
+- [ ] Create adminProcedure middleware in tRPC
+- [ ] Protect all admin-only operations with adminProcedure
+- [ ] Add frontend route guards for admin pages
+- [ ] Fix any privilege escalation vectors
+- [ ] Add admin audit log
+- [ ] Write role-based access control tests

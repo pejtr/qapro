@@ -617,3 +617,35 @@ export async function clearAIConversationHistory(userId: number) {
   if (!db) throw new Error("Database not available");
   await db.delete(aiConversations).where(eq(aiConversations.userId, userId));
 }
+
+
+// ========== Hardware Settings (in-memory per-user store) ==========
+// Stored in memory for simplicity - persists for server lifetime
+// For production, add a hardware_settings table to the schema
+const hardwareSettingsStore = new Map<number, {
+  cpuLabel?: string;
+  gpuLabel?: string;
+  gpuVramGB?: number;
+  updatedAt: number;
+}>();
+
+export async function getHardwareSettings(userId: number) {
+  const settings = hardwareSettingsStore.get(userId);
+  return settings ?? { cpuLabel: null, gpuLabel: null, gpuVramGB: null, updatedAt: null };
+}
+
+export async function saveHardwareSettings(
+  userId: number,
+  data: { cpuLabel?: string; gpuLabel?: string; gpuVramGB?: number }
+) {
+  const existing = hardwareSettingsStore.get(userId) ?? {};
+  const updated = {
+    ...existing,
+    ...(data.cpuLabel !== undefined ? { cpuLabel: data.cpuLabel } : {}),
+    ...(data.gpuLabel !== undefined ? { gpuLabel: data.gpuLabel } : {}),
+    ...(data.gpuVramGB !== undefined ? { gpuVramGB: data.gpuVramGB } : {}),
+    updatedAt: Date.now(),
+  };
+  hardwareSettingsStore.set(userId, updated);
+  return updated;
+}
