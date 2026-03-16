@@ -862,3 +862,9 @@
 - [ ] Fix any privilege escalation vectors
 - [ ] Add admin audit log
 - [ ] Write role-based access control tests
+
+## UI Restructure: Dashboard Hero + Navbar
+- [ ] Move resource bars (CPU/GPU/Neural/Memory) to top navbar as compact mini-bars
+- [ ] Replace hero section with pipeline execution stats (success rate, duration, steps)
+- [ ] Add tab switching for multiple pipelines in hero section
+- [ ] Hide weekly execution chart behind click-to-expand toggle

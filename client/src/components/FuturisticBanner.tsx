@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function FuturisticBanner() {
   const [gallifreyanRotation, setGallifreyanRotation] = useState(0);
   const [energyPulse, setEnergyPulse] = useState(0);
   const [timeRotorPhase, setTimeRotorPhase] = useState(0);
+  const [bannerWidth, setBannerWidth] = useState(1400);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const gallifreyanInterval = setInterval(() => {
@@ -25,8 +27,21 @@ export function FuturisticBanner() {
     };
   }, []);
 
+  // Track banner width for KITT bounds
+  useEffect(() => {
+    if (!bannerRef.current) return;
+    const ro = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        setBannerWidth(entry.contentRect.width);
+      }
+    });
+    ro.observe(bannerRef.current);
+    setBannerWidth(bannerRef.current.offsetWidth);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="relative w-full h-32 bg-gradient-to-r from-amber-950/40 via-orange-950/30 to-amber-950/40 overflow-hidden border-t-2 border-amber-600/40">
+    <div ref={bannerRef} className="relative w-full h-32 bg-gradient-to-r from-amber-950/40 via-orange-950/30 to-amber-950/40 overflow-hidden border-t-2 border-amber-600/40">
 
       {/* Hexagonal console pattern background */}
       <div className="absolute inset-0 opacity-15" style={{
@@ -41,13 +56,29 @@ export function FuturisticBanner() {
                           radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.2) 0%, transparent 40%)`,
       }} />
 
-      {/* ── KITT SCANNER – pure CSS, GPU-smooth ──────────────────────── */}
-      {/* Outer wide soft halo */}
-      <div className="kitt-halo absolute top-0 bottom-0 pointer-events-none" style={{ width: "120px" }} />
-      {/* Mid glow */}
-      <div className="kitt-mid absolute top-0 bottom-0 pointer-events-none" style={{ width: "40px" }} />
-      {/* Sharp core beam */}
-      <div className="kitt-core absolute top-0 bottom-0 pointer-events-none" style={{ width: "4px" }} />
+      {/* ── KITT SCANNER – single wrapper, always in frame ────────────── */}
+      <div
+        className="kitt-wrap absolute top-0 bottom-0 pointer-events-none"
+        style={{
+          width: "120px",
+          // CSS var drives the keyframe endpoint: banner width minus beam width
+          ['--kitt-end' as string]: `${bannerWidth - 120}px`,
+        }}
+      >
+        {/* Wide soft halo */}
+        <div className="absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 60px 100% at 50% 50%, rgba(255,80,0,0.22) 0%, transparent 100%)", filter: "blur(8px)" }}
+        />
+        {/* Mid glow */}
+        <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2" style={{ width: "40px",
+          background: "radial-gradient(ellipse 20px 100% at 50% 50%, rgba(255,110,0,0.45) 0%, transparent 100%)", filter: "blur(3px)" }}
+        />
+        {/* Sharp core */}
+        <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2" style={{ width: "4px",
+          background: "linear-gradient(to bottom, transparent 0%, rgba(255,150,0,0.7) 18%, rgba(255,100,0,0.85) 50%, rgba(255,150,0,0.7) 82%, transparent 100%)",
+          boxShadow: "0 0 10px 3px rgba(255,100,0,0.6), 0 0 20px 7px rgba(255,50,0,0.25)" }}
+        />
+      </div>
       {/* ────────────────────────────────────────────────────────────────── */}
 
       {/* Time rotor energy column (center) */}
@@ -198,38 +229,15 @@ export function FuturisticBanner() {
           75%       { transform: translateY(-20px) translateX(12px) scale(1.05); }
         }
 
-        /* KITT scanner – translate from -60px (off-left) to calc(100vw) using
-           the parent's width via a CSS custom property set inline */
+        /* KITT scanner – single wrapper bounces within exact banner bounds */
         @keyframes kitt-scan {
-          0%   { transform: translateX(-60px); }
-          100% { transform: translateX(var(--kitt-width, 1400px)); }
+          0%   { transform: translateX(0px); }
+          100% { transform: translateX(var(--kitt-end, 1280px)); }
         }
-
-        .kitt-halo {
+        .kitt-wrap {
           left: 0;
-          background: radial-gradient(ellipse 60px 100% at 50% 50%, rgba(255,80,0,0.22) 0%, transparent 100%);
-          filter: blur(8px);
           will-change: transform;
-          animation: kitt-scan 2.8s cubic-bezier(0.45,0,0.55,1) infinite alternate;
-        }
-        .kitt-mid {
-          left: 0;
-          background: radial-gradient(ellipse 20px 100% at 50% 50%, rgba(255,110,0,0.65) 0%, transparent 100%);
-          filter: blur(3px);
-          will-change: transform;
-          animation: kitt-scan 2.8s cubic-bezier(0.45,0,0.55,1) infinite alternate;
-        }
-        .kitt-core {
-          left: 0;
-          background: linear-gradient(to bottom,
-            transparent 0%,
-            rgba(255,150,0,0.9) 18%,
-            #ff6600 50%,
-            rgba(255,150,0,0.9) 82%,
-            transparent 100%);
-          box-shadow: 0 0 14px 5px rgba(255,100,0,0.9), 0 0 28px 10px rgba(255,50,0,0.45);
-          will-change: transform;
-          animation: kitt-scan 2.8s cubic-bezier(0.45,0,0.55,1) infinite alternate;
+          animation: kitt-scan 7s ease-in-out infinite alternate;
         }
       `}</style>
     </div>
