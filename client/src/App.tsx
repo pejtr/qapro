@@ -25,6 +25,7 @@ import BlogPost from "./pages/BlogPost";
 import SecurityTesting from "./pages/SecurityTesting";
 import DataConverter from "./pages/DataConverter";
 import RemoteJobBoard from "./pages/RemoteJobBoard";
+import ArchitectureWhiteboard from "./pages/ArchitectureWhiteboard";
 import { Onboarding } from "./components/Onboarding";
 import { AnimatedBackground } from "./components/AnimatedBackground";
 
@@ -51,6 +52,7 @@ function Router() {
         <Route path="/converter" component={DataConverter} />
         <Route path="/macos" component={MacOSIntegration} />
         <Route path="/jobs" component={RemoteJobBoard} />
+        <Route path="/whiteboard" component={ArchitectureWhiteboard} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

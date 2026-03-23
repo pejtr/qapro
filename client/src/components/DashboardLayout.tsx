@@ -45,6 +45,7 @@ import {
   Link,
   TrendingUp as TrendingUpIcon,
   Briefcase,
+  GitBranch,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -80,6 +81,7 @@ const menuItems = [
   { icon: Link, label: "Backlink Checker", path: "/backlinks" },
   { icon: TrendingUpIcon, label: "Domain Authority", path: "/domain-authority" },
   { icon: Briefcase, label: "Remote Jobs", path: "/jobs" },
+  { icon: GitBranch, label: "Architecture", path: "/whiteboard" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

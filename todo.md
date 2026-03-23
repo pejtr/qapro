@@ -868,3 +868,17 @@
 - [ ] Replace hero section with pipeline execution stats (success rate, duration, steps)
 - [ ] Add tab switching for multiple pipelines in hero section
 - [ ] Hide weekly execution chart behind click-to-expand toggle
+
+## Feature 73: Interactive Architecture Whiteboard
+- [ ] Build canvas whiteboard page with drag-and-drop nodes
+- [ ] Add pan/zoom navigation on canvas
+- [ ] Add node types: process, tool, decision, database, arrow connectors
+- [ ] Pre-populate with QA automation framework diagram (Appium/Selenium/Kotlin/POP)
+- [ ] Add toolbar: add nodes, colors, labels, delete, export PNG
+- [ ] Add to sidebar navigation as "Architecture" or "Whiteboard"
+- [ ] Save/load diagrams to database per user
+
+## Feature 74: QA Interview Presentation Slides
+- [ ] Create slide deck: QA automation architecture for interview
+- [ ] Cover: test strategy, tool selection rationale, POP pattern, CI/CD integration
+- [ ] Include architecture diagrams matching job requirements
