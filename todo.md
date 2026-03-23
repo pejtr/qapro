@@ -892,3 +892,27 @@
 - [x] Translate all dialogs, buttons, labels to Czech
 - [x] Translate error messages and status texts to Czech
 - [x] Set Czech as default language
+
+## Feature 76: Pip-Boy Primary Theme
+- [ ] Read current theme system and index.css
+- [ ] Define Pip-Boy CSS variables (phosphor green #39FF14, dark background, monospace)
+- [ ] Add CRT scanline overlay effect
+- [ ] Add screen flicker/glow animation
+- [ ] Create ThemeContext with Pip-Boy as default, persist to localStorage
+- [ ] Update ThemeSwitcher with Pip-Boy, TARDIS Aurora, Warp Core options
+- [ ] Apply Pip-Boy font (Share Tech Mono / VT323) via Google Fonts
+- [ ] Update DashboardLayout with Pip-Boy classes
+- [ ] Update FuturisticBanner for Pip-Boy theme
+- [ ] Test all pages in Pip-Boy theme
+
+## Feature 77: OMNIMATRIX Rename + Pip-Boy Primary Theme
+- [x] Rename app title to OMNIMATRIX in index.html, DashboardLayout, FuturisticBanner
+- [x] Update subtitle to "AI Automation ToolKit" → "OMNIMATRIX // QA AUTOMATION CORE"
+- [x] Add Pip-Boy CSS variables: phosphor green #39FF14, dark background #0a0f0a
+- [x] Add CRT scanline overlay via CSS pseudo-element
+- [x] Add screen flicker/phosphor glow animation
+- [x] Import VT323, Share Tech Mono, Orbitron from Google Fonts
+- [x] Set Pip-Boy as default theme in ThemeSwitcher (localStorage key 'app-theme')
+- [x] Update ThemeSwitcher: add Pip-Boy option, keep TARDIS Aurora + Warp Core
+- [x] Apply data-app-theme="pip-boy" to html element when theme active
+- [x] Update FuturisticBanner for OMNIMATRIX branding

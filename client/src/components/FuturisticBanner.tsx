@@ -129,22 +129,23 @@ export function FuturisticBanner() {
 
         {/* Center readout */}
         <div className="flex flex-col items-center gap-1">
-          <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 font-mono tracking-widest">
-            QA AUTOMATION
+          <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 font-mono tracking-widest"
+            style={{fontFamily: "'Orbitron', 'Share Tech Mono', monospace"}}>
+            OMNIMATRIX
           </div>
           <div className="flex items-center gap-2 text-xs font-mono text-amber-500/80">
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>{isCzech ? 'ČASOVÝ VORTEX STABILNÍ' : 'TIME VORTEX STABLE'}</span>
+              <span>{isCzech ? 'SYSTÉM AKTIVNÍ' : 'SYSTEM ACTIVE'}</span>
             </div>
             <span className="text-amber-600/50">|</span>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-              <span>{isCzech ? 'AUTOMATIZAČNÍ MATICE ONLINE' : 'AUTOMATION MATRIX ONLINE'}</span>
+              <span>{isCzech ? 'OMNIMATRIX ONLINE' : 'OMNIMATRIX ONLINE'}</span>
             </div>
           </div>
           <div className="text-xs font-mono text-amber-600/60 mt-1">
-            PROTOCOL: GALLIFREYAN v2.1.9
+            OMNIMATRIX // QA AUTOMATION CORE v3.0.0
           </div>
         </div>
 
