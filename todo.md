@@ -882,3 +882,13 @@
 - [ ] Create slide deck: QA automation architecture for interview
 - [ ] Cover: test strategy, tool selection rationale, POP pattern, CI/CD integration
 - [ ] Include architecture diagrams matching job requirements
+
+## Feature 75: Czech Localization (Full UI)
+- [x] Translate DashboardLayout navigation items to Czech
+- [x] Translate Home.tsx dashboard texts to Czech
+- [x] Translate FuturisticBanner texts to Czech
+- [x] Translate RemoteJobBoard page to Czech
+- [x] Translate ArchitectureWhiteboard page to Czech
+- [x] Translate all dialogs, buttons, labels to Czech
+- [x] Translate error messages and status texts to Czech
+- [x] Set Czech as default language

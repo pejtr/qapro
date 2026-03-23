@@ -32,6 +32,7 @@ import {
 } from "recharts";
 import { useMemo, useState, useEffect } from "react";
 import { FuturisticBanner } from "@/components/FuturisticBanner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Simulated performance data for resource visualization
 const performanceData = [
@@ -162,6 +163,7 @@ function detectCpuLabel(): string {
 
 export default function Home() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [cpuLabel, setCpuLabel] = useState("System CPU");
 
   useEffect(() => {
@@ -218,10 +220,10 @@ export default function Home() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Welcome back, {user?.name || "User"}
+            {t('dashboard.welcome')}, {user?.name || "User"}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Your automation cockpit is ready. Here is your system overview.
+            {t('dashboard.overview')}
           </p>
         </div>
         <Badge
@@ -229,44 +231,44 @@ export default function Home() {
           className="border-chart-1/30 text-chart-1 bg-chart-1/10"
         >
           <Activity className="h-3 w-3 mr-1" />
-          System Online
+          {t('status.systemOnline')}
         </Badge>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard
-          title="Total Scripts"
+          title={t('dashboard.totalScripts')}
           value={stats?.totalScripts ?? 0}
           icon={Workflow}
           trend="up"
-          trendLabel="+3 this week"
+          trendLabel={`+3 ${t('dashboard.thisWeek')}`}
         />
         <StatCard
-          title="Active Profiles"
+          title={t('dashboard.activeProfiles')}
           value={stats?.totalProfiles ?? 0}
           icon={Users}
           trend="up"
-          trendLabel="+2 new"
+          trendLabel={`+2 ${t('dashboard.new')}`}
         />
         <StatCard
-          title="Total Executions"
+          title={t('dashboard.totalExecutions')}
           value={stats?.totalExecutions ?? 0}
           icon={Play}
           trend="up"
-          trendLabel="186 this week"
+          trendLabel={`186 ${t('dashboard.thisWeek')}`}
         />
         <StatCard
-          title="Running Now"
+          title={t('dashboard.runningNow')}
           value={stats?.runningInstances ?? 0}
           icon={Zap}
         />
         <StatCard
-          title="Success Rate"
+          title={t('dashboard.successRate')}
           value={`${stats?.successRate ?? 0}%`}
           icon={CheckCircle}
           trend="up"
-          trendLabel="Stable"
+          trendLabel={t('dashboard.stable')}
         />
       </div>
 
@@ -277,7 +279,7 @@ export default function Home() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <Cpu className="h-4 w-4 text-primary" />
-              {cpuLabel} Resource Monitor
+              {cpuLabel} {t('dashboard.resourceMonitor')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -335,22 +337,22 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-4 gap-4 mt-4">
               <ResourceGauge
-                label="CPU Cores"
+                label={t('dashboard.cpuCores')}
                 value={currentMetrics?.cpu ?? 0}
                 color="#6366f1"
               />
               <ResourceGauge
-                label="GPU"
+                label={t('dashboard.gpu')}
                 value={currentMetrics?.gpu ?? 0}
                 color="#8b5cf6"
               />
               <ResourceGauge
-                label="Neural Engine"
+                label={t('dashboard.neuralEngine')}
                 value={currentMetrics?.neural ?? 0}
                 color="#a78bfa"
               />
               <ResourceGauge
-                label="Memory"
+                label={t('dashboard.memory')}
                 value={currentMetrics?.memory ?? 0}
                 color="#c4b5fd"
               />
@@ -363,7 +365,7 @@ export default function Home() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <HardDrive className="h-4 w-4 text-primary" />
-              Platform Distribution
+              {t('dashboard.platformDistribution')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -423,7 +425,7 @@ export default function Home() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Weekly Execution History
+              {t('dashboard.weeklyHistory')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -455,13 +457,13 @@ export default function Home() {
                     dataKey="completed"
                     fill="#6366f1"
                     radius={[4, 4, 0, 0]}
-                    name="Completed"
+                    name={t('dashboard.completed')}
                   />
                   <Bar
                     dataKey="failed"
                     fill="#ef4444"
                     radius={[4, 4, 0, 0]}
-                    name="Failed"
+                    name={t('dashboard.failed')}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -474,7 +476,7 @@ export default function Home() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" />
-              Recent Executions
+              {t('dashboard.recentExecutions')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -531,9 +533,9 @@ export default function Home() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Play className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No executions yet</p>
+                  <p className="text-sm">Zatím žádná spuštění</p>
                   <p className="text-xs mt-1">
-                    Create a script and run it to see activity here
+                    Vytvořte skript a spusťte ho pro zobrazení aktivity
                   </p>
                 </div>
               )}

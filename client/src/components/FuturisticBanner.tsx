@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function FuturisticBanner() {
+  const { language } = useLanguage();
+  const isCzech = language === 'cz';
   const [gallifreyanRotation, setGallifreyanRotation] = useState(0);
   const [energyPulse, setEnergyPulse] = useState(0);
   const [timeRotorPhase, setTimeRotorPhase] = useState(0);
@@ -132,12 +135,12 @@ export function FuturisticBanner() {
           <div className="flex items-center gap-2 text-xs font-mono text-amber-500/80">
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>TIME VORTEX STABLE</span>
+              <span>{isCzech ? 'ČASOVÝ VORTEX STABILNÍ' : 'TIME VORTEX STABLE'}</span>
             </div>
             <span className="text-amber-600/50">|</span>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-              <span>AUTOMATION MATRIX ONLINE</span>
+              <span>{isCzech ? 'AUTOMATIZAČNÍ MATICE ONLINE' : 'AUTOMATION MATRIX ONLINE'}</span>
             </div>
           </div>
           <div className="text-xs font-mono text-amber-600/60 mt-1">

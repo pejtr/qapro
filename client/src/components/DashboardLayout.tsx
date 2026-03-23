@@ -59,29 +59,30 @@ import { ProductivityBar } from "./ProductivityBar";
 import { MindMapDialog } from "./MindMapDialog";
 import { MessagingDropdown } from "./MessagingDropdown";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Workflow, label: "Script Builder", path: "/scripts" },
-  { icon: Users, label: "Profiles", path: "/profiles" },
-  { icon: Code2, label: "Code Generator", path: "/codegen" },
-  { icon: Circle, label: "Recorder", path: "/recorder" },
-  { icon: Container, label: "Docker Manager", path: "/docker" },
-  { icon: Share2, label: "Social Templates", path: "/templates" },
-  { icon: TestTube, label: "BDD Integration", path: "/bdd" },
-  { icon: Monitor, label: "Live Monitor", path: "/monitor" },
-  { icon: Apple, label: "macOS Integration", path: "/macos" },
-  { icon: UserPlus, label: "Collaboration", path: "/collaboration" },
-  { icon: Store, label: "Marketplace", path: "/marketplace" },
-  { icon: FileText, label: "Documentation", path: "/documentation" },
-  { icon: BookOpen, label: "Blog", path: "/blog" },
-  { icon: Sparkles, label: "AI Generator", path: "/ai-generator" },
-  { icon: Shield, label: "Security Testing", path: "/security" },
-  { icon: FileJson, label: "Data Converter", path: "/converter" },
-  { icon: Link, label: "Backlink Checker", path: "/backlinks" },
-  { icon: TrendingUpIcon, label: "Domain Authority", path: "/domain-authority" },
-  { icon: Briefcase, label: "Remote Jobs", path: "/jobs" },
-  { icon: GitBranch, label: "Architecture", path: "/whiteboard" },
+const menuItemDefs = [
+  { icon: LayoutDashboard, key: "menu.dashboard", path: "/" },
+  { icon: Workflow, key: "menu.scriptBuilder", path: "/scripts" },
+  { icon: Users, key: "menu.profiles", path: "/profiles" },
+  { icon: Code2, key: "menu.codeGenerator", path: "/codegen" },
+  { icon: Circle, key: "menu.recorder", path: "/recorder" },
+  { icon: Container, key: "menu.dockerManager", path: "/docker" },
+  { icon: Share2, key: "menu.socialTemplates", path: "/templates" },
+  { icon: TestTube, key: "menu.bddIntegration", path: "/bdd" },
+  { icon: Monitor, key: "menu.liveMonitor", path: "/monitor" },
+  { icon: Apple, key: "menu.macosIntegration", path: "/macos" },
+  { icon: UserPlus, key: "menu.collaboration", path: "/collaboration" },
+  { icon: Store, key: "menu.marketplace", path: "/marketplace" },
+  { icon: FileText, key: "menu.documentation", path: "/documentation" },
+  { icon: BookOpen, key: "menu.blog", path: "/blog" },
+  { icon: Sparkles, key: "menu.aiGenerator", path: "/ai-generator" },
+  { icon: Shield, key: "menu.securityTesting", path: "/security" },
+  { icon: FileJson, key: "menu.dataConverter", path: "/converter" },
+  { icon: Link, key: "menu.backlinkChecker", path: "/backlinks" },
+  { icon: TrendingUpIcon, key: "menu.domainAuthority", path: "/domain-authority" },
+  { icon: Briefcase, key: "menu.remoteJobs", path: "/jobs" },
+  { icon: GitBranch, key: "menu.architecture", path: "/whiteboard" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -120,8 +121,7 @@ export default function DashboardLayout({
               </h1>
             </div>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              The Ultimate Automation Engine cross-platform. Sign in to access your
-              automation cockpit.
+              Ultimátní multiplatformní automatizační engine. Přihlaste se pro přístup k vašemu automatizačnímu kokpitu.
             </p>
           </div>
           <Button
@@ -131,7 +131,7 @@ export default function DashboardLayout({
             size="lg"
             className="w-full shadow-lg"
           >
-            Sign in to continue
+            Přihlásit se
           </Button>
         </div>
       </div>
@@ -163,6 +163,8 @@ function DashboardLayoutContent({
   setSidebarWidth,
 }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
+  const menuItems = menuItemDefs.map(item => ({ ...item, label: t(item.key) }));
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const [mindMapOpen, setMindMapOpen] = useState(false);
@@ -281,7 +283,7 @@ function DashboardLayoutContent({
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
+                  <span>Odhlásit se</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
