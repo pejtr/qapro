@@ -46,6 +46,8 @@ import {
   TrendingUp as TrendingUpIcon,
   Briefcase,
   GitBranch,
+  FlaskConical,
+  CheckSquare,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -83,6 +85,9 @@ const menuItemDefs = [
   { icon: TrendingUpIcon, key: "menu.domainAuthority", path: "/domain-authority" },
   { icon: Briefcase, key: "menu.remoteJobs", path: "/jobs" },
   { icon: GitBranch, key: "menu.architecture", path: "/whiteboard" },
+  { icon: FileText, key: "menu.aiPdfSummarizer", path: "/ai-pdf" },
+  { icon: FlaskConical, key: "menu.testCaseGenerator", path: "/test-generator" },
+  { icon: CheckSquare, key: "menu.xmlValidator", path: "/xml-validator" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

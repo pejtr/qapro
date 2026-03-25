@@ -26,6 +26,9 @@ import SecurityTesting from "./pages/SecurityTesting";
 import DataConverter from "./pages/DataConverter";
 import RemoteJobBoard from "./pages/RemoteJobBoard";
 import ArchitectureWhiteboard from "./pages/ArchitectureWhiteboard";
+import AIPDFSummarizer from "./pages/AIPDFSummarizer";
+import TestCaseGenerator from "./pages/TestCaseGenerator";
+import XMLValidator from "./pages/XMLValidator";
 import { Onboarding } from "./components/Onboarding";
 import { AnimatedBackground } from "./components/AnimatedBackground";
 
@@ -53,6 +56,9 @@ function Router() {
         <Route path="/macos" component={MacOSIntegration} />
         <Route path="/jobs" component={RemoteJobBoard} />
         <Route path="/whiteboard" component={ArchitectureWhiteboard} />
+        <Route path="/ai-pdf" component={AIPDFSummarizer} />
+        <Route path="/test-generator" component={TestCaseGenerator} />
+        <Route path="/xml-validator" component={XMLValidator} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

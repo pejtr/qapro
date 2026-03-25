@@ -34,6 +34,9 @@ const translations: Record<Language, Record<string, string>> = {
     'menu.domainAuthority': 'Domain Authority',
     'menu.remoteJobs': 'Remote Jobs',
     'menu.architecture': 'Architecture',
+    'menu.aiPdfSummarizer': 'AI PDF Summarizer',
+    'menu.testCaseGenerator': 'Test Case Generator',
+    'menu.xmlValidator': 'XML Validator',
 
     // Common
     'common.earnings': 'Earnings',
@@ -182,6 +185,9 @@ const translations: Record<Language, Record<string, string>> = {
     'menu.domainAuthority': 'Autorita Domény',
     'menu.remoteJobs': 'Vzdálené Pozice',
     'menu.architecture': 'Architektura',
+    'menu.aiPdfSummarizer': 'AI PDF Sumarizátor',
+    'menu.testCaseGenerator': 'Generátor Testů',
+    'menu.xmlValidator': 'XML Validátor',
 
     // Common
     'common.earnings': 'Výdělky',

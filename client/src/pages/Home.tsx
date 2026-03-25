@@ -107,23 +107,124 @@ function ResourceGauge({
   label,
   value,
   color,
+  sublabel,
 }: {
   label: string;
   value: number;
   color: string;
+  sublabel?: string;
 }) {
+  const size = 100;
+  const radius = 38;
+  const strokeWidth = 8;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (value / 100) * circumference;
+  // Wave fill height (bottom of circle = 100%, top = 0%)
+  const waveY = size - (value / 100) * size;
+  const waveId = `wave-clip-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{label}</span>
-        <span className="text-sm font-semibold text-foreground">{value}%</span>
-      </div>
-      <div className="h-2 rounded-full bg-secondary overflow-hidden">
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="relative" style={{ width: size, height: size }}>
+        {/* Outer glow pulse */}
         <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${value}%`, backgroundColor: color }}
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: `radial-gradient(circle, ${color}18 0%, transparent 70%)`,
+            animation: 'gauge-glow 3s ease-in-out infinite',
+          }}
+        />
+        {/* SVG radial gauge */}
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)', position: 'absolute', inset: 0 }}>
+          {/* Defs for wave clip */}
+          <defs>
+            <clipPath id={waveId}>
+              <rect x="0" y={waveY} width={size} height={size} />
+            </clipPath>
+          </defs>
+          {/* Background track */}
+          <circle
+            cx={size/2} cy={size/2} r={radius}
+            fill="none"
+            stroke="hsl(var(--secondary))"
+            strokeWidth={strokeWidth}
+          />
+          {/* Wave fill circle (clipped from bottom) */}
+          <circle
+            cx={size/2} cy={size/2} r={radius - strokeWidth/2 - 1}
+            fill={`${color}22`}
+            clipPath={`url(#${waveId})`}
+            style={{ transition: 'all 1.2s cubic-bezier(0.4,0,0.2,1)' }}
+          />
+          {/* Progress arc */}
+          <circle
+            cx={size/2} cy={size/2} r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            style={{
+              transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)',
+              filter: `drop-shadow(0 0 5px ${color}99)`,
+            }}
+          />
+          {/* Tick marks at 25%, 50%, 75% */}
+          {[0.25, 0.5, 0.75].map((pct) => {
+            const angle = pct * 2 * Math.PI;
+            const x1 = size/2 + (radius - strokeWidth) * Math.cos(angle);
+            const y1 = size/2 + (radius - strokeWidth) * Math.sin(angle);
+            const x2 = size/2 + (radius + 2) * Math.cos(angle);
+            const y2 = size/2 + (radius + 2) * Math.sin(angle);
+            return <line key={pct} x1={x1} y1={y1} x2={x2} y2={y2} stroke={`${color}55`} strokeWidth="1.5" />;
+          })}
+        </svg>
+        {/* Center value text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span
+            className="font-bold leading-none"
+            style={{ color, fontFamily: 'var(--font-mono, monospace)', fontSize: '1.1rem' }}
+          >
+            {value}%
+          </span>
+          {sublabel && (
+            <span className="text-[9px] mt-0.5" style={{ color: `${color}99`, fontFamily: 'monospace' }}>{sublabel}</span>
+          )}
+        </div>
+        {/* Wave pulse rings */}
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            border: `1.5px solid ${color}55`,
+            animation: 'wave-ring-1 3s ease-out infinite',
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            border: `1px solid ${color}33`,
+            animation: 'wave-ring-2 3s ease-out infinite 1s',
+          }}
         />
       </div>
+      <span className="text-xs text-muted-foreground text-center leading-tight font-medium">{label}</span>
+      <style>{`
+        @keyframes wave-ring-1 {
+          0% { transform: scale(0.9); opacity: 0.8; }
+          60% { transform: scale(1.12); opacity: 0.15; }
+          100% { transform: scale(1.2); opacity: 0; }
+        }
+        @keyframes wave-ring-2 {
+          0% { transform: scale(0.95); opacity: 0.5; }
+          60% { transform: scale(1.18); opacity: 0.1; }
+          100% { transform: scale(1.28); opacity: 0; }
+        }
+        @keyframes gauge-glow {
+          0%, 100% { opacity: 0.4; transform: scale(0.95); }
+          50% { opacity: 1; transform: scale(1.05); }
+        }
+      `}</style>
     </div>
   );
 }
@@ -181,6 +282,11 @@ export default function Home() {
     () => performanceData[performanceData.length - 1],
     []
   );
+
+  // Live server metrics (CPU, memory) from Node.js os module
+  const { data: liveMetrics } = trpc.metrics.system.useQuery(undefined, {
+    refetchInterval: 5000,
+  });
 
   const exportPDF = trpc.reports.exportPDF.useMutation();
 
@@ -335,11 +441,12 @@ export default function Home() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-4 gap-4 mt-4">
+            <div className="flex justify-around items-center mt-4 gap-2">
               <ResourceGauge
                 label={t('dashboard.cpuCores')}
-                value={currentMetrics?.cpu ?? 0}
+                value={liveMetrics?.cpu?.loadPercent ?? currentMetrics?.cpu ?? 0}
                 color="#6366f1"
+                sublabel={liveMetrics?.cpu?.cores ? `${liveMetrics.cpu.cores}c` : undefined}
               />
               <ResourceGauge
                 label={t('dashboard.gpu')}
@@ -353,8 +460,9 @@ export default function Home() {
               />
               <ResourceGauge
                 label={t('dashboard.memory')}
-                value={currentMetrics?.memory ?? 0}
+                value={liveMetrics?.memory?.usedPercent ?? currentMetrics?.memory ?? 0}
                 color="#c4b5fd"
+                sublabel={liveMetrics?.memory ? `${Math.round((liveMetrics.memory.usedMB ?? 0) / 1024)}GB` : undefined}
               />
             </div>
           </CardContent>

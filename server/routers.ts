@@ -565,6 +565,111 @@ Example:
       const result = JSON.parse(typeof content === 'string' ? content : '{}');
       return result;
     }),
+
+    // PDF Summarizer for QA documentation
+    summarizePDF: protectedProcedure
+      .input(z.object({
+        filename: z.string(),
+        fileBase64: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { invokeLLM } = await import('./_core/llm');
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a senior QA engineer. Analyze the provided PDF document and create a structured summary in Czech language focused on:
+1. Hlavní účel dokumentu
+2. Klíčové testovací požadavky
+3. Testovací scénáře a případy
+4. Akceptační kritéria
+5. Rizika a doporučení
+
+Buď konkrétní a strukturovaný. Použij markdown formátování.`,
+            },
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'file_url' as const,
+                  file_url: {
+                    url: `data:application/pdf;base64,${input.fileBase64}`,
+                    mime_type: 'application/pdf' as const,
+                  },
+                },
+                {
+                  type: 'text' as const,
+                  text: `Analyzuj tento PDF dokument '${input.filename}' z pohledu QA inženýra a vytvoř strukturované shrnutí v češtině.`,
+                },
+              ],
+            },
+          ],
+        });
+        const summary = response.choices?.[0]?.message?.content ?? 'Nepodařilo se vygenerovat shrnutí.';
+        return { summary: typeof summary === 'string' ? summary : JSON.stringify(summary) };
+      }),
+
+    // Test Case Generator
+    generateTestCases: protectedProcedure
+      .input(z.object({
+        featureDescription: z.string().min(10).max(5000),
+        testType: z.enum(['functional', 'regression', 'smoke', 'e2e', 'api']).default('functional'),
+        format: z.enum(['gherkin', 'table', 'markdown']).default('gherkin'),
+      }))
+      .mutation(async ({ input }) => {
+        const { invokeLLM } = await import('./_core/llm');
+        const formatLabel = input.format === 'gherkin' ? 'Gherkin (Given/When/Then)' : input.format === 'table' ? 'Tabulka (ID, Název, Kroky, Očekávaný výsledek)' : 'Markdown seznam';
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a senior QA engineer specializing in test case design. Generate comprehensive test cases in Czech language.
+Format: ${formatLabel}
+Test type: ${input.testType}
+Include: positive tests, negative tests, edge cases, boundary values.`,
+            },
+            {
+              role: 'user',
+              content: `Vygeneruj testovací případy pro tuto funkcionalitu:\n\n${input.featureDescription}`,
+            },
+          ],
+        });
+        const testCases = response.choices?.[0]?.message?.content ?? 'Nepodařilo se vygenerovat testovací případy.';
+        return { testCases: typeof testCases === 'string' ? testCases : JSON.stringify(testCases) };
+      }),
+
+    // XML Validator with AI insights
+    validateXML: protectedProcedure
+      .input(z.object({
+        xmlContent: z.string().min(1).max(100000),
+        xsdContent: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { invokeLLM } = await import('./_core/llm');
+        const xsdNote = input.xsdContent ? ' oproti přiloženému XSD schématu' : '';
+        const xsdBlock = input.xsdContent ? `\n\nXSD Schema:\n\`\`\`xml\n${input.xsdContent}\n\`\`\`` : '';
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content: `You are an XML/XSD validation expert and QA engineer. Analyze the provided XML (and optionally XSD schema) and provide:
+1. Validace struktury XML
+2. Chyby a varování
+3. Shoda se schématem (pokud je XSD poskytnuto)
+4. Doporučení pro opravu
+5. QA insights - potenciální problémy pro testování
+
+Odpovídej v češtině, buď konkrétní a technický.`,
+            },
+            {
+              role: 'user',
+              content: `Zvaliduj tento XML dokument${xsdNote}:\n\nXML:\n\`\`\`xml\n${input.xmlContent}\n\`\`\`${xsdBlock}`,
+            },
+          ],
+        });
+        const result = response.choices?.[0]?.message?.content ?? 'Nepodařilo se provést validaci.';
+        return { result: typeof result === 'string' ? result : JSON.stringify(result) };
+      }),
   }),
 
   // System Metrics (real data via Node.js os module)

@@ -935,3 +935,10 @@
 - [ ] Convert weekly execution bar chart to animated wave/area chart
 - [ ] Add radial progress rings to stat cards
 - [ ] Ensure all visuals work in all 3 themes (Pip-Boy green, TARDIS amber, Warp Core cyan)
+
+## Feature 80: OMNIMATRIX AI Tools Integration
+- [ ] AI PDF Summarizer - upload PDF, get QA-focused summary via LLM
+- [ ] AI Test Case Generator - input feature/spec text, generate structured test cases
+- [ ] AI XML Validator - paste/upload XML, validate against XSD with AI insights
+- [ ] Add all three AI tools to sidebar navigation under "AI Generátor" section
+- [ ] Credits model UI (show remaining AI credits per tool)
