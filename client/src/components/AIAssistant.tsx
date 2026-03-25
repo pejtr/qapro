@@ -21,7 +21,7 @@ interface Message {
 type Persona = "marketing" | "technical" | "general";
 
 export function AIAssistant() {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -175,7 +175,7 @@ export function AIAssistant() {
 
       {/* Chat Panel */}
       {isExpanded && (
-        <div className="flex flex-col border-t border-slate-700/50" style={{ height: 'calc(50vh)' }}>
+        <div className="flex flex-col border-t border-slate-700/50" style={{ height: '320px' }}>
           {/* Persona Selector & Clear History */}
           <div className="px-4 py-2 border-b border-slate-700/50 flex items-center justify-between gap-2">
             <Select value={persona} onValueChange={(value) => handlePersonaChange(value as Persona)}>

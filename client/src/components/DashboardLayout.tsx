@@ -57,11 +57,12 @@ import { NotificationCenter } from "./NotificationCenter";
 import { AIAssistant } from "./AIAssistant";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { EarningsWidget } from "./EarningsWidget";
-import { ProductivityBar } from "./ProductivityBar";
 import { MindMapDialog } from "./MindMapDialog";
 import { MessagingDropdown } from "./MessagingDropdown";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { format } from "date-fns";
+import { Network, Calendar as CalendarIcon } from "lucide-react";
 
 const menuItemDefs = [
   { icon: LayoutDashboard, key: "menu.dashboard", path: "/" },
@@ -175,6 +176,11 @@ function DashboardLayoutContent({
   const [mindMapOpen, setMindMapOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [todoOpen, setTodoOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -238,7 +244,7 @@ function DashboardLayoutContent({
             </div>
           </SidebarHeader>
 
-          <SidebarContent className="gap-0">
+          <SidebarContent className="gap-0 overflow-y-auto">
             <SidebarMenu className="px-2 py-1 flex flex-col gap-0.5">
               {menuItems.map((item) => {
                 const isActive = location === item.path;
@@ -305,27 +311,45 @@ function DashboardLayoutContent({
       </div>
 
       <SidebarInset>
-        {/* Unified top header bar */}
-        <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40 gap-2">
-          {/* Left: mobile trigger + page title */}
+        {/* Main top header bar - clean single row */}
+        <div className="flex border-b h-12 items-center bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40 gap-2">
+          {/* Mobile: sidebar trigger + page label */}
           {isMobile && (
-            <div className="flex items-center gap-2 shrink-0">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <span className="text-sm font-medium tracking-tight text-foreground truncate">
+            <>
+              <SidebarTrigger className="h-8 w-8 rounded-lg bg-background shrink-0" />
+              <span className="text-sm font-medium text-foreground truncate shrink-0 mr-2">
                 {activeMenuItem?.label ?? "Menu"}
               </span>
-            </div>
+            </>
           )}
-          {/* Center: ProductivityBar content (time + quote + actions) */}
-          <div className="flex-1 flex items-center justify-between min-w-0">
-            <ProductivityBar 
-              onOpenMindMap={() => setMindMapOpen(true)}
-              onOpenCalendar={() => setCalendarOpen(true)}
-              onOpenTodo={() => setTodoOpen(true)}
-            />
+          {/* Time (always visible, compact) */}
+          <span className="text-sm font-mono font-semibold tabular-nums shrink-0">
+            {format(currentTime, "HH:mm")}
+          </span>
+          <span className="text-xs text-muted-foreground hidden xl:block shrink-0">
+            {format(currentTime, "EEE d. MMM")}
+          </span>
+          {/* Divider */}
+          <div className="w-px h-5 bg-border shrink-0" />
+          {/* Quick actions */}
+          <div className="flex items-center gap-0.5 shrink-0">
+            <Button variant="ghost" size="sm" onClick={() => setMindMapOpen(true)} className="h-8 px-2 gap-1 text-xs">
+              <Network className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Mind Map</span>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setCalendarOpen(true)} className="h-8 px-2 gap-1 text-xs">
+              <CalendarIcon className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Calendar</span>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setTodoOpen(true)} className="h-8 px-2 gap-1 text-xs">
+              <CheckSquare className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">To-Do</span>
+            </Button>
           </div>
-          {/* Right: widgets */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Spacer */}
+          <div className="flex-1" />
+          {/* Right: widgets row */}
+          <div className="flex items-center gap-0.5 shrink-0">
             <MessagingDropdown />
             <EarningsWidget totalEarningsCZK={12500} />
             <LanguageSwitcher />
