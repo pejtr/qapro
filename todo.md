@@ -916,3 +916,22 @@
 - [x] Update ThemeSwitcher: add Pip-Boy option, keep TARDIS Aurora + Warp Core
 - [x] Apply data-app-theme="pip-boy" to html element when theme active
 - [x] Update FuturisticBanner for OMNIMATRIX branding
+
+## Feature 78: Expanded Philosophical Quotes System
+- [ ] Find current quotes system in codebase
+- [ ] Add Brotherhood of Steel technology quotes
+- [ ] Add Eureka (city of wonders) quotes
+- [ ] Add Stargate Atlantis / Lanteans quotes
+- [ ] Add Star Trek technology quotes (Spock, Data, Geordi, Scotty)
+- [ ] Add Stargate SG-1 quotes (Ancients, Asgard, Nox)
+- [ ] Add Stargate Universe quotes (Destiny, Rush, Eli, Ancients/Lanteans full knowledge)
+- [ ] Add universe filter/tag to each quote
+- [ ] Ensure smooth rotation with attribution
+
+## Feature 79: Circular & Wave Visualizations
+- [ ] Save quotes checkpoint first
+- [ ] Convert CPU/GPU/Memory/Neural resource bars to circular radial SVG gauges
+- [ ] Add wave/pulse animation to circular gauges (Pip-Boy style)
+- [ ] Convert weekly execution bar chart to animated wave/area chart
+- [ ] Add radial progress rings to stat cards
+- [ ] Ensure all visuals work in all 3 themes (Pip-Boy green, TARDIS amber, Warp Core cyan)

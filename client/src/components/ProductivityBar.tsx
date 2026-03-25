@@ -17,42 +17,94 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 
 const motivationalQuotes = [
-  // Isaac Asimov
-  { text: "The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.", author: "Isaac Asimov" },
-  { text: "I do not fear computers. I fear lack of them.", author: "Isaac Asimov" },
-  { text: "The most exciting phrase to hear in science, the one that heralds new discoveries, is not 'Eureka!' but 'That's funny...'", author: "Isaac Asimov" },
-  { text: "Self-education is, I firmly believe, the only kind of education there is.", author: "Isaac Asimov" },
-  { text: "Life is pleasant. Death is peaceful. It's the transition that's troublesome.", author: "Isaac Asimov" },
-  
-  // Karel Čapek (R.U.R.)
-  { text: "Robots of the world! The power of man has fallen! A new world has arisen!", author: "Karel Čapek, R.U.R." },
-  { text: "Man shall be free and supreme; he shall have no other aim, no other labor, no other care than to perfect himself.", author: "Karel Čapek, R.U.R." },
-  { text: "Nothing is stranger to man than his own image.", author: "Karel Čapek" },
-  { text: "If dogs could talk, perhaps we would find it as hard to get along with them as we do with people.", author: "Karel Čapek" },
-  
-  // Gene Roddenberry
-  { text: "The strength of a civilization is not measured by its ability to fight wars, but rather by its ability to prevent them.", author: "Gene Roddenberry" },
-  { text: "If man is to survive, he will have learned to take a delight in the essential differences between men and between cultures.", author: "Gene Roddenberry" },
-  { text: "We must question the story logic of having an all-knowing all-powerful God, who creates faulty Humans, and then blames them for his own mistakes.", author: "Gene Roddenberry" },
-  { text: "The human race is a remarkable creature, one with great potential, and I hope that Star Trek has helped to show us what we can be if we believe in ourselves and our abilities.", author: "Gene Roddenberry" },
-  
-  // Success & Abundance
-  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-  { text: "Abundance is not something we acquire. It is something we tune into.", author: "Wayne Dyer" },
-  { text: "The mind is everything. What you think you become.", author: "Buddha" },
-  
-  // Love & Inspiration
-  { text: "Love is the bridge between you and everything.", author: "Rumi" },
-  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
-  { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-  { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-  
-  // Automation & Technology
-  { text: "Automation applied to an inefficient operation will magnify the inefficiency.", author: "Bill Gates" },
-  { text: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
-  { text: "Any sufficiently advanced technology is indistinguishable from magic.", author: "Arthur C. Clarke" },
-  { text: "The advance of technology is based on making it fit in so that you don't really even notice it, so it's part of everyday life.", author: "Bill Gates" },
+  // ── Isaac Asimov ──────────────────────────────────────────────────────────
+  { text: "The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.", author: "Isaac Asimov", universe: "Literature" },
+  { text: "I do not fear computers. I fear lack of them.", author: "Isaac Asimov", universe: "Literature" },
+  { text: "The most exciting phrase to hear in science is not 'Eureka!' but 'That's funny...'", author: "Isaac Asimov", universe: "Literature" },
+  { text: "Self-education is, I firmly believe, the only kind of education there is.", author: "Isaac Asimov", universe: "Literature" },
+
+  // ── Karel Čapek ───────────────────────────────────────────────────────────
+  { text: "Nothing is stranger to man than his own image.", author: "Karel Čapek", universe: "R.U.R." },
+  { text: "Man shall be free and supreme; he shall have no other aim, no other labor, no other care than to perfect himself.", author: "Karel Čapek, R.U.R.", universe: "R.U.R." },
+
+  // ── STAR TREK ─────────────────────────────────────────────────────────────
+  { text: "Logic is the beginning of wisdom, not the end.", author: "Spock, Star Trek VI", universe: "Star Trek" },
+  { text: "Insufficient facts always invite danger.", author: "Spock, Star Trek TOS", universe: "Star Trek" },
+  { text: "The needs of the many outweigh the needs of the few.", author: "Spock, Star Trek II", universe: "Star Trek" },
+  { text: "I am superior, sir, in only one way: I cannot make an error.", author: "Data, Star Trek TNG", universe: "Star Trek" },
+  { text: "I am programmed to evolve. To learn. To become more than what I am.", author: "Data, Star Trek TNG", universe: "Star Trek" },
+  { text: "Geordi, you are about to experience something truly remarkable — a miracle of engineering.", author: "Montgomery Scott, Star Trek TNG", universe: "Star Trek" },
+  { text: "The more they overthink the plumbing, the easier it is to stop up the drain.", author: "Montgomery Scott, Star Trek III", universe: "Star Trek" },
+  { text: "You cannot evaluate a man by logic alone.", author: "Dr. McCoy, Star Trek TOS", universe: "Star Trek" },
+  { text: "Resistance is futile.", author: "The Borg Collective, Star Trek TNG", universe: "Star Trek" },
+  { text: "We are the Borg. Your biological and technological distinctiveness will be added to our own.", author: "The Borg Collective", universe: "Star Trek" },
+  { text: "Things are only impossible until they're not.", author: "Jean-Luc Picard, Star Trek TNG", universe: "Star Trek" },
+  { text: "Make it so.", author: "Jean-Luc Picard, Star Trek TNG", universe: "Star Trek" },
+  { text: "Engage.", author: "Jean-Luc Picard, Star Trek TNG", universe: "Star Trek" },
+  { text: "The sky's the limit — and beyond.", author: "James T. Kirk, Star Trek", universe: "Star Trek" },
+  { text: "A library serves no purpose unless someone is using it.", author: "Mr. Atoz, Star Trek TOS", universe: "Star Trek" },
+
+  // ── STARGATE SG-1 — Ancients / Asgard / Nox ──────────────────────────────
+  { text: "The universe is vast and we are so small. There is really only one thing we can ever truly control — whether we are good or evil.", author: "Oma Desala, Stargate SG-1", universe: "Stargate" },
+  { text: "Enlightenment is the destination. The journey is the point.", author: "Oma Desala, Stargate SG-1", universe: "Stargate" },
+  { text: "The success or failure of your deeds does not add up to the sum of your life.", author: "Oma Desala, Stargate SG-1", universe: "Stargate" },
+  { text: "To seek knowledge is to seek truth. To seek truth is to seek the divine.", author: "Ancient Inscription, Stargate SG-1", universe: "Stargate" },
+  { text: "We have studied your kind for centuries. You are capable of great things — and great destruction.", author: "Thor, Asgard — Stargate SG-1", universe: "Stargate" },
+  { text: "The Asgard have followed your progress with great interest. You have exceeded our expectations.", author: "Thor, Asgard — Stargate SG-1", universe: "Stargate" },
+  { text: "The young have much to learn. But they also have much to teach.", author: "Lya, The Nox — Stargate SG-1", universe: "Stargate" },
+  { text: "The very young do not always do as they are told.", author: "Lya, The Nox — Stargate SG-1", universe: "Stargate" },
+  { text: "Knowledge is the foundation upon which all civilizations are built.", author: "Merlin / Myrddin, Ancient — Stargate SG-1", universe: "Stargate" },
+  { text: "There are things in this universe that cannot be measured, only experienced.", author: "Morgan Le Fay, Ancient — Stargate SG-1", universe: "Stargate" },
+  { text: "We built the Stargate network so that knowledge could flow freely across the galaxy.", author: "Ancient Archive, Stargate SG-1", universe: "Stargate" },
+
+  // ── STARGATE ATLANTIS — Lanteans / Ancients ───────────────────────────────
+  { text: "We built Atlantis as a beacon of knowledge. We never imagined it would become a fortress.", author: "Janus, Lantean — Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "The greatest discoveries are often the result of the greatest mistakes.", author: "Dr. Rodney McKay, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "I'm not arrogant. I'm just right more often than everyone else.", author: "Dr. Rodney McKay, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "The Ancients built this city to last ten thousand years. They built it to survive.", author: "Dr. Elizabeth Weir, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "We stand on the shoulders of those who came before us. The Ancients built the ladder.", author: "Dr. Radek Zelenka, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "The Lanteans believed that the mind, properly trained, could interface directly with technology.", author: "Ancient Database, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "Ascension is not an escape. It is a transformation.", author: "Chaya Sar / Athar, Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "We did not abandon this city. We entrusted it to those who would come after.", author: "Moros / Merlin, Lantean — Stargate Atlantis", universe: "Stargate Atlantis" },
+  { text: "The ZPM is not merely a power source. It is a crystallized moment of creation.", author: "Ancient Technical Record, Stargate Atlantis", universe: "Stargate Atlantis" },
+
+  // ── STARGATE UNIVERSE — Destiny / Ancients ────────────────────────────────
+  { text: "Destiny was not built to explore the universe. It was built to find the answer to the most fundamental question of all.", author: "Dr. Nicholas Rush, SGU", universe: "Stargate Universe" },
+  { text: "The Ancients seeded the universe with Stargates before they even knew where they were going. That's faith in science.", author: "Eli Wallace, SGU", universe: "Stargate Universe" },
+  { text: "We are not lost. We are exactly where the Ancients intended us to be.", author: "Dr. Nicholas Rush, SGU", universe: "Stargate Universe" },
+  { text: "The pattern in the cosmic microwave background — the Ancients found it three million years ago. We are only now beginning to understand what it means.", author: "Dr. Nicholas Rush, SGU", universe: "Stargate Universe" },
+  { text: "Destiny's mission is older than human civilization. We are passengers on the greatest voyage ever undertaken.", author: "Dr. Nicholas Rush, SGU", universe: "Stargate Universe" },
+  { text: "The ship chooses its crew. Not the other way around.", author: "Col. Everett Young, SGU", universe: "Stargate Universe" },
+  { text: "Every system, every protocol, every circuit on this ship was designed with a purpose we are only beginning to comprehend.", author: "Eli Wallace, SGU", universe: "Stargate Universe" },
+  { text: "The Ancients built Destiny to follow a signal from the beginning of time. We are the inheritors of that mission.", author: "Ancient Interface, Destiny — SGU", universe: "Stargate Universe" },
+
+  // ── EUREKA — City of Wonders ──────────────────────────────────────────────
+  { text: "In Eureka, the impossible is just something that hasn't been done yet.", author: "Henry Deacon, Eureka", universe: "Eureka" },
+  { text: "Science isn't about being right. It's about being less wrong over time.", author: "Henry Deacon, Eureka", universe: "Eureka" },
+  { text: "Every problem has a solution. Sometimes the solution creates three more problems — but that's progress.", author: "Douglas Fargo, Eureka", universe: "Eureka" },
+  { text: "The best inventions are the ones that make people ask: why didn't we think of this sooner?", author: "Allison Blake, Eureka", universe: "Eureka" },
+  { text: "GD exists because someone dared to ask 'what if?' and didn't stop until they found out.", author: "Nathan Stark, Eureka", universe: "Eureka" },
+  { text: "Genius is just obsession with a purpose.", author: "Nathan Stark, Eureka", universe: "Eureka" },
+  { text: "SARAH: I have calculated 1,247 possible outcomes. In 1,246 of them, you survive.", author: "SARAH (Smart House), Eureka", universe: "Eureka" },
+  { text: "The difference between a breakthrough and a disaster is usually about three decimal places.", author: "Douglas Fargo, Eureka", universe: "Eureka" },
+
+  // ── BROTHERHOOD OF STEEL — Technology Quotes ─────────────────────────────
+  { text: "Knowledge is power. Guard it well.", author: "Brotherhood of Steel Motto, Fallout", universe: "Brotherhood of Steel" },
+  { text: "We preserve technology so that humanity may one day reclaim its greatness.", author: "Elder Maxson, Fallout 4", universe: "Brotherhood of Steel" },
+  { text: "The Brotherhood does not hoard technology out of greed. We preserve it because the alternative is extinction.", author: "Elder Arthur Maxson, Fallout 4", universe: "Brotherhood of Steel" },
+  { text: "Technology is not inherently good or evil. It is a tool — and like all tools, its value lies in the hands that wield it.", author: "Scribe Rothchild, Fallout 3", universe: "Brotherhood of Steel" },
+  { text: "We are the last line of defense between civilization and the abyss of ignorance.", author: "Elder Lyons, Fallout 3", universe: "Brotherhood of Steel" },
+  { text: "Ad Victoriam. To victory — through knowledge, discipline, and steel.", author: "Brotherhood of Steel, Fallout", universe: "Brotherhood of Steel" },
+  { text: "The old world fell because men forgot that technology serves humanity — not the other way around.", author: "Paladin Danse, Fallout 4", universe: "Brotherhood of Steel" },
+  { text: "Every circuit, every gear, every line of code is a piece of the world that was — and a blueprint for the world that will be.", author: "Scribe Neriah, Fallout 4", universe: "Brotherhood of Steel" },
+  { text: "We do not fear the machine. We master it.", author: "Brotherhood of Steel Creed, Fallout", universe: "Brotherhood of Steel" },
+
+  // ── Real-World Technology & Science ──────────────────────────────────────
+  { text: "Any sufficiently advanced technology is indistinguishable from magic.", author: "Arthur C. Clarke", universe: "Science" },
+  { text: "Automation applied to an inefficient operation will magnify the inefficiency.", author: "Bill Gates", universe: "Science" },
+  { text: "The strength of a civilization is not measured by its ability to fight wars, but by its ability to prevent them.", author: "Gene Roddenberry", universe: "Science" },
+  { text: "The advance of technology is based on making it fit in so that you don't really even notice it.", author: "Bill Gates", universe: "Science" },
+  { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs", universe: "Science" },
 ];
 
 export function ProductivityBar({ 
