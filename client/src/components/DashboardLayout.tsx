@@ -91,9 +91,9 @@ const menuItemDefs = [
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 480;
-const MIN_WIDTH = 320;
-const MAX_WIDTH = 750;
+const DEFAULT_WIDTH = 260;
+const MIN_WIDTH = 220;
+const MAX_WIDTH = 360;
 
 export default function DashboardLayout({
   children,
@@ -239,7 +239,7 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            <SidebarMenu className="px-2 py-1 grid grid-cols-2 gap-1">
+            <SidebarMenu className="px-2 py-1 flex flex-col gap-0.5">
               {menuItems.map((item) => {
                 const isActive = location === item.path;
                 return (
@@ -305,43 +305,34 @@ function DashboardLayoutContent({
       </div>
 
       <SidebarInset>
-        {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-2">
+        {/* Unified top header bar */}
+        <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40 gap-2">
+          {/* Left: mobile trigger + page title */}
+          {isMobile && (
+            <div className="flex items-center gap-2 shrink-0">
               <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="tracking-tight text-foreground">
-                    {activeMenuItem?.label ?? "Menu"}
-                  </span>
-                </div>
-              </div>
+              <span className="text-sm font-medium tracking-tight text-foreground truncate">
+                {activeMenuItem?.label ?? "Menu"}
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <MessagingDropdown />
-              <EarningsWidget totalEarningsCZK={12500} />
-              <LanguageSwitcher />
-              <ThemeSwitcher />
-              <NotificationCenter />
-            </div>
+          )}
+          {/* Center: ProductivityBar content (time + quote + actions) */}
+          <div className="flex-1 flex items-center justify-between min-w-0">
+            <ProductivityBar 
+              onOpenMindMap={() => setMindMapOpen(true)}
+              onOpenCalendar={() => setCalendarOpen(true)}
+              onOpenTodo={() => setTodoOpen(true)}
+            />
           </div>
-        )}
-        {!isMobile && (
-          <div className="flex border-b h-14 items-center justify-end bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-2">
-              <MessagingDropdown />
-              <EarningsWidget totalEarningsCZK={12500} />
-              <LanguageSwitcher />
-              <ThemeSwitcher />
-              <NotificationCenter />
-            </div>
+          {/* Right: widgets */}
+          <div className="flex items-center gap-1 shrink-0">
+            <MessagingDropdown />
+            <EarningsWidget totalEarningsCZK={12500} />
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+            <NotificationCenter />
           </div>
-        )}
-        <ProductivityBar 
-          onOpenMindMap={() => setMindMapOpen(true)}
-          onOpenCalendar={() => setCalendarOpen(true)}
-          onOpenTodo={() => setTodoOpen(true)}
-        />
+        </div>
         <main className="flex-1 p-6">{children}</main>
         <MindMapDialog open={mindMapOpen} onOpenChange={setMindMapOpen} />
       </SidebarInset>

@@ -136,15 +136,14 @@ export function ProductivityBar({
   }, [currentTime]);
 
   return (
-    <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-      <div className="container flex h-14 items-center justify-between px-4">
+    <div className="flex w-full items-center justify-between">
         {/* Left: Time & Date with World Clock */}
         <div className="flex items-center gap-4">
-          <div className="flex flex-col">
-            <div className="text-2xl font-bold tabular-nums">
+          <div className="flex items-center gap-3">
+            <div className="text-base font-bold tabular-nums font-mono">
               {format(currentTime, "HH:mm:ss")}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-muted-foreground hidden lg:block">
               {format(currentTime, "EEEE, MMMM d, yyyy")}
             </div>
           </div>
@@ -249,17 +248,12 @@ export function ProductivityBar({
         </div>
 
         {/* Center: Motivational Quote */}
-        <div className="hidden md:flex flex-1 items-center justify-center px-8">
-          <div className="flex items-center gap-2 max-w-4xl">
-            <Sparkles className="h-4 w-4 text-primary shrink-0" />
-            <div className="flex flex-col">
-              <p className="text-sm italic text-foreground">
-                "{quote.text}"
-              </p>
-              <p className="text-xs text-muted-foreground">
-                — {quote.author}
-              </p>
-            </div>
+        <div className="hidden lg:flex flex-1 items-center justify-center px-6 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Sparkles className="h-3 w-3 text-primary shrink-0" />
+            <p className="text-xs italic text-muted-foreground truncate">
+              "{quote.text}" — {quote.author}
+            </p>
           </div>
         </div>
 
@@ -293,7 +287,6 @@ export function ProductivityBar({
             <span className="hidden sm:inline">To-Do</span>
           </Button>
         </div>
-      </div>
     </div>
   );
 }
